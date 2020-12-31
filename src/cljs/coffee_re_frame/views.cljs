@@ -45,8 +45,8 @@
      [recipe-title recipe]
      [recipe-step]
      [:p (str (:tick @state)) " seconds"]
-     [:p (str (:volume @state)) " g liquid"]
-     [:button {:on-click #(re-frame/dispatch [::events/tick])} "Tick"]
+     [:p (str (:volume @state)) "g liquid"]
+     #_[:button {:on-click #(re-frame/dispatch [::events/tick])} "Tick"]
      ]))
 
 (defn home-panel []

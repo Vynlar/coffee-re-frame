@@ -14,7 +14,7 @@
                  [ring "1.8.2"]]
 
   :plugins [[lein-shadow "0.3.1"]
-            
+            [cider/cider-nrepl "0.25.5"]
             [lein-shell "0.5.0"]]
 
   :min-lein-version "2.9.0"

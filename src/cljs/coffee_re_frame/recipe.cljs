@@ -31,38 +31,44 @@
 (s/def ::step (s/multi-spec step-type :step/type))
 (s/def ::recipe (s/keys :req [::name ::steps]))
 
-(def v60 {::name "v60"
-          ::steps [{:step/type :step.type/start
-                    :step/title "Get Ready"}
+(defn create-v60-recipe [total-volume]
+  {::name "v60"
+   ::steps [{:step/type :step.type/start
+             :step/title "Get Ready"}
 
-                   {:step/type :step.type/prompt
-                    :step/title "Wet the grounds"
-                    :step/volume 30}
+            {:step/type :step.type/prompt
+             :step/title "Wet the grounds"
+             :step/volume (* total-volume (/ 30 250))}
 
-                   {:step/type :step.type/fixed
-                    :step/title "Bloom"
-                    :step/duration 5
-                    :step/timer :start}
+            {:step/type :step.type/fixed
+             :step/title "Bloom"
+             :step/duration 30
+             :step/timer :start}
 
-                   {:step/type :step.type/fixed
-                    :step/title "First Pour"
-                    :step/volume (+ 70 50)
-                    :step/duration 5}
+            {:step/type :step.type/fixed
+             :step/title "First Pour"
+             :step/volume (* total-volume (/ 120 250))
+             :step/duration 30}
 
-                   {:step/type :step.type/fixed
-                    :step/title "Second Pour"
-                    :step/volume 100
-                    :step/duration 5}
+            {:step/type :step.type/fixed
+             :step/title "Second Pour"
+             :step/volume (* total-volume (/ 100 250))
+             :step/duration 30}
 
-                   {:step/type :step.type/prompt
-                    :step/title "Stir and swirl"}
+            {:step/type :step.type/prompt
+             :step/title "Stir and swirl"}
 
-                   {:step/type :step.type/prompt
-                    :step/title "Drawdown"}
+            {:step/type :step.type/prompt
+             :step/title "Drawdown"}
 
-                   {:step/type :step.type/end
-                    :step/title "Enjoy"
-                    :step/timer :stop}]})
+            {:step/type :step.type/end
+             :step/title "Enjoy"
+             :step/timer :stop}]})
+
+;; TODO write tests for this
+(defn get-total-volume [recipe]
+  (let [steps (::steps recipe)]
+    (reduce + (map (fn [{:step/keys [volume]}] (if volume volume 0)) steps))))
 
 (s/valid? ::recipe v60)
 (s/explain ::recipe v60)

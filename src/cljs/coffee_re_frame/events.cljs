@@ -20,106 +20,65 @@
 (re-frame/reg-event-db
  ::select-recipe
  (fn-traced [db [_ recipe-key]]
-            (-> db
-                (assoc :selected-recipe recipe-key)
-                (assoc :recipe-state db/default-recipe-state))))
+            (db/select-recipe db recipe-key)))
 
-(defn inc-tick [state]
-  (let [new-state
-        (-> state
-            (update :tick inc)
-            (update :current-step-tick inc))
-        volume (-> state :current-step :step/volume)
-        duration (-> state :current-step :step/duration)]
-    (if (and duration volume)
-      (update new-state :volume (fn [old-volume] (+ old-volume (/ volume duration))))
-      new-state)))
+(defn update-one-time-volume [db]
+  (let [{:step/keys [volume duration]} (db/get-current-step db)]
+    (if (and volume (not duration))
+      (update-in db [:recipe-state :volume] + volume)
+      db)))
 
-(defn get-current-step [recipe {:keys [step-index]}]
-  (get
-   (::recipe/steps recipe)
-   step-index))
-
-;; Take the re-frame state, look up the current recipe and step, merge those into the recipe state,
-;; Then call a function that takes an event type and that map and returns a map of the new recipe state and
-;; a list of actions (start or stop)
-
-(defn to-intermediate-state [{:keys [recipe-state recipes selected-recipe]}]
-  (let [recipe (selected-recipe recipes)
-        step (get-current-step recipe recipe-state)]
-    (merge recipe-state
-           {:current-step step
-            :recipe recipe})))
-
-(defn update-current-step [state]
-  (assoc state :current-step (get-current-step (:recipe state) state)))
-
-(defn update-volume [{:keys [volume current-step] :as state}]
-  (if (and (= (:step/duration current-step) nil) (not= (:step/volume current-step) nil))
-    (update state :volume #(+ % (:step/volume current-step)))
-    state))
-
-(defn advance-step [state]
-  (-> state
-      (update :step-index inc)
-      (assoc :current-step-tick 0)
-      update-current-step
-      update-volume))
-
-(defn check-fixed-condition [{:keys [current-step current-step-tick] :as state}]
-  (if (>= current-step-tick (:step/duration current-step))
-    (advance-step state)
-    state))
-
-(defn handle-transition [state action]
-  (case [action (-> state :current-step :step/type)]
-    [:next :step.type/start] (advance-step state)
-    [:next :step.type/prompt] (advance-step state)
-    [:tick :step.type/prompt] (inc-tick state)
-    [:tick :step.type/fixed] (-> state
-                                 inc-tick
-                                 check-fixed-condition)
-    state))
-
-(defn from-intermediate-state [state]
-  (dissoc state :current-step :recipe))
-
-(defn transition-event-handler [action]
-  (fn [{:keys [db]} _]
-    (let [new-recipe-state (->
-                            db
-                            to-intermediate-state
-                            (handle-transition action)
-                            from-intermediate-state)
-          new-db (assoc db :recipe-state new-recipe-state)
-          current-step (get-current-step ((:selected-recipe db) (:recipes db)) new-recipe-state)]
-      (if (= (:current-step-tick new-recipe-state) 0)
-        (cond
-          (= (:step/timer current-step) :start)
-          {:db new-db
-           :interval {:action :start
-                      :id :ticker
-                      :interval 1000
-                      :event [::tick]}}
-
-
-          (= (:step/timer current-step) :stop)
-          {:db new-db
-           :interval {:action :stop
-                      :id :ticker}}
-
-          true
-          {:db new-db}
-          )
-        {:db new-db}))))
+;; Advance to next step, resetting necessary state
+;; Start/stop timers
+(defn handle-next-step [{:keys [db]} _]
+  (let [new-db (-> db
+                   (update-in [:recipe-state :step-index] inc)
+                   (assoc-in [:recipe-state :current-step-tick] 0)
+                   update-one-time-volume)
+        new-current-step (db/get-current-step new-db)]
+    (merge {:db new-db}
+           (case (:step/timer new-current-step)
+             :start {:interval {:action :start
+                                :id :ticker
+                                :interval 1000
+                                :event [::tick]}}
+             :stop {:interval {:action :stop
+                               :id :ticker}}
+             nil))))
 
 (re-frame/reg-event-fx
  ::next-step
- (transition-event-handler :next))
+ handle-next-step)
+
+
+(defn should-advance [db]
+  (let [{:step/keys [type duration]} (db/get-current-step db)
+        current-step-tick (get-in db [:recipe-state :current-step-tick])]
+    (if (= type :step.type/fixed)
+      (= current-step-tick duration)
+      false)))
+
+(defn increment-ticks [db]
+  (-> db
+      (update-in [:recipe-state :tick] inc)
+      (update-in [:recipe-state :current-step-tick] inc)))
+
+(defn update-incremental-volume [db]
+  (let [{:step/keys [volume duration]} (db/get-current-step db)]
+    (if (and volume duration)
+      (update-in db [:recipe-state :volume] + (/ volume duration))
+      db)))
+
+;; Handle timing, sometimes advance to next step
+(defn handle-tick [cofx _]
+  (let [db (:db cofx)
+        new-db (-> db increment-ticks update-incremental-volume)]
+    {:db new-db
+     :fx [(if (should-advance new-db) [:dispatch [::next-step]])]}))
 
 (re-frame/reg-event-fx
  ::tick
- (transition-event-handler :tick))
+ handle-tick)
 
 
 #_(defmulti handle-tick get-current-step-type)
