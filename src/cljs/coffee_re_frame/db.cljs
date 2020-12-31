@@ -4,7 +4,8 @@
 
 (def default-db
   {:selected-recipe nil
-   :recipes {:v60 (recipe/create-v60-recipe 500)}
+   :recipes {:v60 (recipe/create-v60-recipe 500)
+             :v62 (recipe/create-v60-recipe 250)}
    :recipe-state nil})
 
 (def default-recipe-state {:tick 0

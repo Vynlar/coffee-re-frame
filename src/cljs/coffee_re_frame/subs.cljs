@@ -31,3 +31,28 @@
    (if selected-recipe
      (selected-recipe recipes)
      nil)))
+
+(re-frame/reg-sub
+ ::total-step-count
+ :<- [::selected-recipe]
+ (fn [recipe _]
+   (count (::recipe/steps recipe))))
+
+(re-frame/reg-sub
+ ::step-index
+ (fn [db _]
+   (get-in db [:recipe-state :step-index])))
+
+(re-frame/reg-sub
+ ::recipe-progress
+ :<- [::step-index]
+ :<- [::total-step-count]
+ (fn [[index total] _]
+   {:index index
+    :total total}))
+
+(re-frame/reg-sub
+ ::total-volume
+ (fn [_] [(re-frame/subscribe [::selected-recipe])])
+ (fn [[recipe] _]
+   (recipe/get-total-volume recipe)))

@@ -6,12 +6,13 @@
 (s/def :step/type keyword?)
 (s/def :step/title string?)
 (s/def :step/duration pos-int?)
+(s/def :step/next-button-text string?)
 (s/def :step/timer #{:start :stop})
 
 (defmulti step-type :step/type)
 (defmethod step-type :step.type/start [_]
   (s/keys :req [:step/type :step/title]
-          :opt [:step/timer]))
+          :opt [:step/timer :step/next-button-text]))
 
 (defmethod step-type :step.type/fixed [_]
   (s/keys :req [:step/type :step/title :step/duration]
@@ -19,7 +20,7 @@
 
 (defmethod step-type :step.type/prompt [_]
   (s/keys :req [:step/type :step/title]
-          :opt [:step/timer]))
+          :opt [:step/timer :step/next-button-text]))
 
 (defmethod step-type :step.type/end [_]
   (s/keys :req [:step/type :step/title]
@@ -34,7 +35,8 @@
 (defn create-v60-recipe [total-volume]
   {::name "v60"
    ::steps [{:step/type :step.type/start
-             :step/title "Get Ready"}
+             :step/title "Get Ready"
+             :step/next-button-text "Begin"}
 
             {:step/type :step.type/prompt
              :step/title "Wet the grounds"
@@ -68,7 +70,7 @@
 ;; TODO write tests for this
 (defn get-total-volume [recipe]
   (let [steps (::steps recipe)]
-    (reduce + (map (fn [{:step/keys [volume]}] (if volume volume 0)) steps))))
+    (reduce + (map (fn [{:step/keys [volume]}] (or volume 0)) steps))))
 
-(s/valid? ::recipe v60)
-(s/explain ::recipe v60)
+(s/valid? ::recipe (create-v60-recipe 250))
+(s/explain ::recipe (create-v60-recipe 250))
