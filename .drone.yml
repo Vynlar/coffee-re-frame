@@ -1,0 +1,21 @@
+kind: pipeline
+type: kubernetes
+name: coffee-re-frame
+metadata:
+  namespace: drone
+trigger:
+  branch:
+  - master
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    mtu: 1000
+    registry: rg.fr-par.scw.cloud/dockerregistry
+    username: nologin
+    password:
+      from_secret: registry_password
+    repo: rg.fr-par.scw.cloud/dockerregistry/coffee-re-frame
+    tags: ${DRONE_BUILD_NUMBER}
+    dockerfile: Dockerfile
