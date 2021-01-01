@@ -2,8 +2,6 @@ FROM clojure:lein AS build
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends make
 
-ENV NVM_DIR /usr/local/nvm
-
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
 RUN source $HOME/.bashrc && nvm install 14.15.3
 RUN ln -s $HOME/.nvm/versions/node/v14.15.3/bin/node /usr/bin/node
