@@ -2,7 +2,7 @@ FROM clojure:lein AS build
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends make
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN sudo apt-get install -y nodejs
 RUN node -v
 RUN npm -v
