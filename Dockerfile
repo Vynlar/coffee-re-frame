@@ -14,5 +14,5 @@ COPY . .
 RUN lein deps
 RUN lein release
 
-FROM nginx
-COPY resources/public /usr/share/nginx/html
+FROM nginx as app
+COPY --from=build /app/resources/public /usr/share/nginx/html
