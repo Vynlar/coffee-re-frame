@@ -1,6 +1,7 @@
 (ns coffee-re-frame.views
   (:require
    [re-frame.core :as re-frame]
+   [reagent.core :refer [class-names]]
    [coffee-re-frame.subs :as subs]
    [coffee-re-frame.events :as events]
    [coffee-re-frame.recipe :as recipe]
@@ -9,26 +10,30 @@
 
 ;; home
 
-(defn button [attrs text]
-  [:button (merge {:class "bg-yellow-700 px-3 py-1 text-white rounded shadow"} attrs) text])
-
-(defn micro-header [text]
-  [:p {:class "uppercase text-xs tracking-wider text-gray-500"} text])
+(defn micro-header
+  ([text] (micro-header {:variant :light} text))
+  ([{:keys [variant]} text]
+   (let [classes (case variant
+                   :light "text-white opacity-80"
+                   :dark "text-black opacity-80")]
+     [:p {:class (class-names "uppercase text-xs tracking-wider" classes)} text])))
 
 (defn recipe-list-item [recipe-key recipe]
-  [:li {:class "p-4 border border-gray-300 rounded space-y-2"}
+  [:li {:class "p-4 bg-blue-500 border border-blue-400 rounded space-y-2"}
    [:div
     [micro-header "Name"]
     [:h2 {:class "font-bold"} (::recipe/name recipe)]]
-   [button {:on-click #(re-frame/dispatch [::events/select-recipe recipe-key])} "Start Brew"]])
+   [:div
+    [micro-header "Volume"]
+    [:p (:total-volume recipe) "g"]]
 
-(defn heading [text]
-  [:h1 {:class "text-3xl font-bold"} text])
+   [:button {:on-click #(re-frame/dispatch [::events/select-recipe recipe-key])
+             :class "underline"}
+    "Start Brew"]])
 
 (defn recipe-select []
   (let [recipes (re-frame/subscribe [::subs/recipes])]
-    [:div {:class "space-y-3"}
-     [heading "Select a recipe"]
+    [:div {:class "space-y-3 p-4"}
      (->>
       @recipes
       (map (fn [[recipe-key recipe]]
@@ -36,50 +41,67 @@
       (into [:ul {:class "grid md:grid-cols-2 lg:grid-cols-3 gap-3"}]))]))
 
 (defn recipe-title [recipe]
-  [heading (::recipe/name recipe)])
+  [:h1 (::recipe/name recipe)])
 
 (defn recipe-cancel-button []
-  [button {:on-click #(re-frame/dispatch [::events/select-recipe nil])} "Cancel"])
+  [:button {:class "text-xs tracking-wide"
+            :on-click #(re-frame/dispatch [::events/select-recipe nil])} "Back"])
 
-(defn next-step-button []
-  (let [step @(re-frame/subscribe [::subs/current-step])]
-    (if (contains? #{:step.type/start :step.type/prompt} (:step/type step))
-      [button {:on-click #(re-frame/dispatch [::events/next-step])} (or (:step/next-button-text step) "Next Step")])))
+(defn recipe-header [recipe]
+  [:div {:class "h-12 flex items-center justify-center bg-gray-900 border-b border-gray-700"}
+   [:div {:class "absolute left-4"}
+    [recipe-cancel-button]]
+   [recipe-title recipe]])
+
+(defn next-step-panel []
+  (let [step @(re-frame/subscribe [::subs/current-step])
+        next-step @(re-frame/subscribe [::subs/next-step])
+        remaining-seconds @(re-frame/subscribe [::subs/remaining-seconds-in-step])]
+    [:div {:class "p-3"}
+     (if (contains? #{:step.type/start :step.type/prompt} (:step/type step))
+       [:button {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
+                 :on-click #(re-frame/dispatch [::events/next-step])}
+        [micro-header {:variant :light} "Continue to"]
+        (or (:step/title next-step) "Done")]
+
+       [:div {:class "bg-gray-600 py-3 px-4 text-white flex flex-col w-full rounded"}
+        [micro-header (str "Up next in " remaining-seconds)]
+        (or (:step/title next-step) "Done")])]))
+
+(defn recipe-progress []
+  (let [{:keys [index total]} @(re-frame/subscribe [::subs/recipe-progress])]
+    [micro-header (str "Step " (str (inc index)) " of " (str total))]))
 
 (defn recipe-step []
   (let [step @(re-frame/subscribe [::subs/current-step])]
     [:div
-     [micro-header "Current Step"]
-     [:h2 {:class "text-xl"} (:step/title step)]]))
+     [:div {:class "px-4 py-3 bg-gray-800 border-b border-gray-700"}
+      [recipe-progress]
+      [:h2 {:class "text-xl"}
+       (:step/title step)]]
+     [:div {:class "px-4 py-3"}
+      (:step/description step)]]))
 
-(defn recipe-progress []
-  (let [{:keys [index total]} @(re-frame/subscribe [::subs/recipe-progress])]
-    [:div "Step " (str (inc index)) " of " (str total)]))
-
-(defn recipe-session [recipe]
+(defn liquid-timer []
   (let [state (re-frame/subscribe [::subs/recipe-state])
         total-volume @(re-frame/subscribe [::subs/total-volume])]
-    [:div {:class "space-y-2"}
-     [recipe-cancel-button]
-     [recipe-title recipe]
-     [recipe-step]
-     [micro-header "Progress"]
-     [recipe-progress]
-     [:div
-      [micro-header "Liquid weight"]
-      [:p {:class "text-2xl"}
-       (str (js/Math.round (:volume @state))) "g"
-       [:span {:class "text-base text-gray-500"} "/" total-volume "g"]]]
-     [:div
-      [micro-header "Time"]
-      [:p {:class "text-lg"} (str (:tick @state)) "s"]]
-     [next-step-button]
-     #_[:button {:on-click #(re-frame/dispatch [::events/tick])} "Tick"]
-     ]))
+    [:div {:class "bg-white text-black p-4 pb-5"}
+     [micro-header {:variant :dark} "Liquid weight"]
+     [:p {:class "text-5xl"}
+      (str (js/Math.round (:volume @state))) "g"
+      [:span {:class "text-base text-gray-600"} "/" total-volume "g"]]]))
+
+(defn recipe-session [recipe]
+  [:div {:class "flex flex-col h-screen"}
+   [recipe-header recipe]
+   [liquid-timer]
+   [recipe-step]
+   [:div {:class "mt-auto"}
+    [next-step-panel]]])
 
 (defn home-panel []
   (let [recipe (re-frame/subscribe [::subs/selected-recipe])]
-    [:div {:class "container mx-auto px-4 pt-6"}
+    [:div {:class "max-w-md mx-auto bg-gray-900 text-white min-h-screen"}
      (if @recipe
        [recipe-session @recipe]
        [recipe-select])]))

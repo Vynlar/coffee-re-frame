@@ -11,7 +11,9 @@
 (re-frame/reg-sub
  ::recipes
  (fn [db _]
-   (:recipes db)))
+   (into {}
+         (for [[recipe-key recipe] (:recipes db)]
+           [recipe-key (assoc recipe :total-volume (recipe/get-total-volume recipe))]))))
 
 (re-frame/reg-sub
  ::recipe-state
@@ -24,6 +26,13 @@
  :<- [::recipe-state]
  (fn [[recipe {:keys [step-index]}] _]
    (get (::recipe/steps recipe) step-index)))
+
+(re-frame/reg-sub
+ ::next-step
+ :<- [::selected-recipe]
+ :<- [::recipe-state]
+ (fn [[recipe {:keys [step-index]}] _]
+   (get (::recipe/steps recipe) (inc step-index))))
 
 (re-frame/reg-sub
  ::selected-recipe
@@ -50,6 +59,15 @@
  (fn [[index total] _]
    {:index index
     :total total}))
+
+(re-frame/reg-sub
+ ::remaining-seconds-in-step
+ :<- [::current-step]
+ :<- [::recipe-state]
+ (fn [[current-step recipe-state] _]
+   (let [seconds-in-step (:step/duration current-step)
+         current-step-tick (:current-step-tick recipe-state)]
+     (- seconds-in-step current-step-tick))))
 
 (re-frame/reg-sub
  ::total-volume
