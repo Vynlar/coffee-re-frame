@@ -93,16 +93,17 @@
       [:span {:class "text-base text-gray-600"} "/" total-volume "g"]]]))
 
 (defn recipe-session [recipe]
-  [:div {:class "flex flex-col h-screen"}
-   [recipe-header recipe]
-   [liquid-timer]
-   [recipe-step]
-   [:div {:class "mt-auto"}
-    [next-step-panel]]])
+  [:div {:class "lg:w-96 lg:h-96 lg:mx-auto relative"}
+   [:div {:class "flex flex-col h-screen"}
+    [recipe-header recipe]
+    [liquid-timer]
+    [recipe-step]
+    [:div {:class "mt-auto"}
+     [next-step-panel]]]])
 
 (defn home-panel []
   (let [recipe (re-frame/subscribe [::subs/selected-recipe])]
-    [:div {:class "max-w-md mx-auto bg-gray-900 text-white min-h-screen"}
+    [:div {:class "mx-auto bg-gray-900 text-white min-h-screen"}
      (if @recipe
        [recipe-session @recipe]
        [recipe-select])]))
