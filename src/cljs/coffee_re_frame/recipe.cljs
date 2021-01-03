@@ -78,7 +78,6 @@
              :step/description "Discard coffee grounds and enjoy."
              :step/timer :stop}]})
 
-;; TODO write tests for this
 (defn get-total-volume [recipe]
   (let [steps (::steps recipe)]
     (reduce + (map (fn [{:step/keys [volume]}] (or volume 0)) steps))))

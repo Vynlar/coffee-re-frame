@@ -19,7 +19,7 @@
      [:p {:class (class-names "uppercase text-xs tracking-wider" classes)} text])))
 
 (defn recipe-list-item [recipe-key recipe]
-  [:li {:class "p-4 bg-blue-500 border border-blue-400 rounded space-y-2"}
+  [:li {:class "p-4 bg-gray-800 border border-gray-600 rounded space-y-2"}
    [:div
     [micro-header "Name"]
     [:h2 {:class "font-bold"} (::recipe/name recipe)]]
@@ -28,12 +28,13 @@
     [:p (:total-volume recipe) "g"]]
 
    [:button {:on-click #(re-frame/dispatch [::events/select-recipe recipe-key])
-             :class "underline"}
+             :class "px-3 bg-blue-600 text-white py-1 rounded"}
     "Start Brew"]])
 
 (defn recipe-select []
   (let [recipes (re-frame/subscribe [::subs/recipes])]
     [:div {:class "space-y-3 p-4"}
+     [:h1 {:class "text-3xl font-bold"} "Select recipe"]
      (->>
       @recipes
       (map (fn [[recipe-key recipe]]
