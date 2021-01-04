@@ -86,11 +86,11 @@
 (defn liquid-timer []
   (let [state (re-frame/subscribe [::subs/recipe-state])
         total-volume @(re-frame/subscribe [::subs/total-volume])]
-    [:div {:class "bg-white text-black p-4 pb-5"}
+    [:div {:class "bg-white text-blue-600 p-4 pb-5"}
      [micro-header {:variant :dark} "Liquid weight"]
-     [:p {:class "text-5xl"}
+     [:p {:class "text-5xl font-bold"}
       (str (js/Math.round (:volume @state))) "g"
-      [:span {:class "text-base text-gray-600"} "/" total-volume "g"]]]))
+      [:span {:class "text-base font-normal text-gray-600"} "/" total-volume "g"]]]))
 
 (defn recipe-session [recipe]
   [:div {:class "lg:w-96 lg:h-96 lg:mx-auto relative"}
