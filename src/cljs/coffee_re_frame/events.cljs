@@ -4,7 +4,6 @@
    [clojure.core.async :as a]
    [coffee-re-frame.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
-
    [coffee-re-frame.recipe :as recipe]))
 
 (re-frame/reg-event-db
@@ -19,8 +18,10 @@
 
 (re-frame/reg-event-db
  ::select-recipe
- (fn-traced [db [_ recipe-key]]
-            (db/select-recipe db recipe-key)))
+ (fn-traced [db [_ recipe-key volume]]
+            (-> db
+                (assoc-in [:recipes recipe-key] ((get recipe/recipe-constructors recipe-key) volume))
+                (db/select-recipe recipe-key))))
 
 (defn update-one-time-volume [db]
   (let [{:step/keys [volume duration]} (db/get-current-step db)]

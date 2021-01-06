@@ -1,7 +1,7 @@
 (ns coffee-re-frame.views
   (:require
    [re-frame.core :as re-frame]
-   [reagent.core :refer [class-names]]
+   [reagent.core :as reagent :refer [class-names]]
    [coffee-re-frame.subs :as subs]
    [coffee-re-frame.events :as events]
    [coffee-re-frame.recipe :as recipe]
@@ -12,46 +12,38 @@
 
 (defn micro-header
   ([text] (micro-header {:variant :light} text))
-  ([{:keys [variant]} text]
+  ([{:keys [variant as]
+     :as attrs
+     :or {variant :light as :p}} text]
    (let [classes (case variant
-                   :light "text-white opacity-80"
-                   :dark "text-black opacity-80")]
-     [:p {:class (class-names "uppercase text-xs tracking-wider" classes)} text])))
+                   :dark "text-black opacity-80"
+                   :light "text-white opacity-80")]
+     [as (merge attrs {:class (class-names "uppercase text-xs tracking-wider font-normal" classes)}) text])))
 
 (defn recipe-list-item [recipe-key recipe]
-  [:li {:class "p-4 bg-gray-800 border border-gray-600 rounded space-y-2"}
-   [:div
-    [micro-header "Name"]
-    [:h2 {:class "font-bold"} (::recipe/name recipe)]]
-   [:div
-    [micro-header "Volume"]
-    [:p (:total-volume recipe) "g"]]
-
-   [:button {:on-click #(re-frame/dispatch [::events/select-recipe recipe-key])
-             :class "px-3 bg-blue-600 text-white py-1 rounded"}
-    "Start Brew"]])
+  [:a {:class "p-4 bg-gray-800 border border-gray-600 rounded space-y-2 font-bold hover:bg-blue-500 transition transition-50"
+       :href (str "#/setup/" (name recipe-key))}
+   (::recipe/name recipe)])
 
 (defn recipe-select []
   (let [recipes (re-frame/subscribe [::subs/recipes])]
     [:div {:class "space-y-3 p-4"}
-     [:h1 {:class "text-3xl font-bold"} "Select recipe"]
-     (->>
-      @recipes
-      (map (fn [[recipe-key recipe]]
-             [recipe-list-item recipe-key recipe]))
-      (into [:ul {:class "grid md:grid-cols-2 lg:grid-cols-3 gap-3"}]))]))
+     [micro-header "Select a brew method"]
+     (into [:ul {:class "grid gap-3"}]
+           (for [[recipe-key constructor] recipe/recipe-constructors]
+             [recipe-list-item recipe-key (constructor 250)]))]))
 
 (defn recipe-title [recipe]
   [:h1 (::recipe/name recipe)])
 
-(defn recipe-cancel-button []
-  [:button {:class "text-xs tracking-wide"
-            :on-click #(re-frame/dispatch [::events/select-recipe nil])} "Back"])
+(defn home-button []
+  [:a {:class "text-xs tracking-wide"
+       :href "#/"} "Back"])
 
 (defn recipe-header [recipe]
   [:div {:class "h-12 flex items-center justify-center bg-gray-900 border-b border-gray-700"}
    [:div {:class "absolute left-4"}
-    [recipe-cancel-button]]
+    [home-button]]
    [recipe-title recipe]])
 
 (defn next-step-panel []
@@ -101,23 +93,39 @@
     [:div {:class "mt-auto"}
      [next-step-panel]]]])
 
+(defn container [& children]
+  (into
+   [:div {:class "mx-auto bg-gray-900 text-white min-h-screen"}]
+   children))
+
 (defn home-panel []
+  [container [recipe-select]])
+
+(defn brew-panel []
   (let [recipe (re-frame/subscribe [::subs/selected-recipe])]
-    [:div {:class "mx-auto bg-gray-900 text-white min-h-screen"}
-     (if @recipe
-       [recipe-session @recipe]
-       [recipe-select])]))
+    [container [recipe-session @recipe]]))
 
-
-;; about
-
-(defn about-panel []
-  [:div
-   [:h1 "This is the About Page."]
-
-   [:div
-    [:a {:href "#/"}
-     "go to Home Page"]]])
+(defn setup-panel []
+  (let [recipe-key @(re-frame/subscribe [::subs/selected-recipe-key])
+        state (reagent/atom {:volume 250})]
+    (fn []
+      [container
+       [:form {:class "flex flex-col p-4 space-y-2"}
+        [:div {:class "pb-6"}
+         [home-button]]
+        [micro-header {:for "volume" :as :label} "How much coffee do you want to make?"]
+        [:p {:class "text-3xl font-bold"} (:volume @state) "ml"]
+        [:p {:class "italic text-sm text-gray-300"} "250ml is about a cup"]
+        [:input {:id "volume"
+                 :type :range
+                 :step 10
+                 :min 0
+                 :max 1000
+                 :value (:volume @state)
+                 :on-change #(swap! state assoc :volume (js/parseInt (.. % -target -value)))
+                 }]
+        [:a {:href (str  "#/brew/" (name recipe-key) "/" (:volume @state))
+             :class "self-end bg-blue-500 py-2 px-6 rounded"} "Next"]]])))
 
 
 ;; main
@@ -125,7 +133,8 @@
 (defn- panels [panel-name]
   (case panel-name
     :home-panel [home-panel]
-    :about-panel [about-panel]
+    :brew-panel [brew-panel]
+    :setup-panel [setup-panel]
     [:div]))
 
 (defn show-panel [panel-name]

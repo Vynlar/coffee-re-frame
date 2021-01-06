@@ -22,11 +22,15 @@
   ;; --------------------
   ;; define routes here
   (defroute "/" []
-    (re-frame/dispatch [::events/set-active-panel :home-panel])
-    )
+    (re-frame/dispatch [::events/set-active-panel :home-panel]))
 
-  (defroute "/about" []
-    (re-frame/dispatch [::events/set-active-panel :about-panel]))
+  (defroute "/brew/:recipe-key/:volume" [recipe-key volume]
+    (re-frame/dispatch [::events/select-recipe (keyword recipe-key) volume])
+    (re-frame/dispatch [::events/set-active-panel :brew-panel]))
+
+  (defroute "/setup/:recipe-key" [recipe-key]
+    (re-frame/dispatch [::events/select-recipe (keyword recipe-key)])
+    (re-frame/dispatch [::events/set-active-panel :setup-panel]))
 
 
   ;; --------------------

@@ -42,6 +42,11 @@
      nil)))
 
 (re-frame/reg-sub
+ ::selected-recipe-key
+ (fn [{:keys [selected-recipe]}]
+   selected-recipe))
+
+(re-frame/reg-sub
  ::total-step-count
  :<- [::selected-recipe]
  (fn [recipe _]
