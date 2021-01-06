@@ -51,12 +51,20 @@
         next-step @(re-frame/subscribe [::subs/next-step])
         remaining-seconds @(re-frame/subscribe [::subs/remaining-seconds-in-step])]
     [:div {:class "p-3"}
-     (if (contains? #{:step.type/start :step.type/prompt} (:step/type step))
+     (cond
+       (contains? #{:step.type/start :step.type/prompt} (:step/type step))
        [:button {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
                  :on-click #(re-frame/dispatch [::events/next-step])}
         [micro-header {:variant :light} "Continue to"]
         (or (:step/title next-step) "Done")]
 
+       (contains? #{:step.type/end} (:step/type step))
+       [:a {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
+            :href "#/"}
+        [micro-header {:variant :light} "Recipe complete"]
+        "Start over"]
+
+       true
        [:div {:class "bg-gray-600 py-3 px-4 text-white flex flex-col w-full rounded"}
         [micro-header (str "Up next in " remaining-seconds)]
         (or (:step/title next-step) "Done")])]))
