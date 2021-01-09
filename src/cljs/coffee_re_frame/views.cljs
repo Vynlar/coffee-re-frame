@@ -91,14 +91,28 @@
           ]]
       )]))
 
+(defn format-time [seconds]
+  (let [minutes (js/Math.floor (/ seconds 60))
+        seconds (rem seconds 60)]
+    (str minutes ":" seconds)))
+
 (defn liquid-timer []
   (let [state (re-frame/subscribe [::subs/recipe-state])
-        total-volume @(re-frame/subscribe [::subs/total-volume])]
+        total-volume @(re-frame/subscribe [::subs/total-volume])
+        current-step (re-frame/subscribe [::subs/current-step])]
     [:div {:class "bg-white text-blue-600 p-4 pb-5"}
-     [micro-header {:variant :dark} "Liquid weight"]
-     [:p {:class "text-5xl font-bold"}
-      (str (js/Math.round (:volume @state))) "g"
-      [:span {:class "text-base font-normal text-gray-600"} "/" total-volume "g"]]]))
+     (if (= (:step/type @current-step) :step.type/end)
+       [:div
+        [micro-header {:variant :dark} "Brew time"]
+        [:p {:class "text-5xl font-bold"}
+         (format-time (:tick @state))]]
+
+       [:div
+        
+        [micro-header {:variant :dark} "Liquid weight"]
+        [:p {:class "text-5xl font-bold"}
+         (str (js/Math.round (:volume @state))) "g"
+         [:span {:class "text-base font-normal text-gray-600"} "/" total-volume "g"]]])]))
 
 (defn recipe-session [recipe]
   [:div {:class "lg:w-96 lg:h-96 lg:mx-auto relative"}
