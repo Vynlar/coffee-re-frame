@@ -102,16 +102,16 @@
 
 (defn recipe-session [recipe]
   [:div {:class "lg:w-96 lg:h-96 lg:mx-auto relative"}
-   [:div {:class "flex flex-col h-screen"}
+   [:div {:class "flex flex-col h-full"}
     [recipe-header recipe]
     [liquid-timer]
     [recipe-step]
-    [:div {:class "mt-auto"}
+    [:div {:class "fixed w-full bottom-0"}
      [next-step-panel]]]])
 
 (defn container [& children]
   (into
-   [:div {:class "mx-auto bg-gray-900 text-white min-h-screen"}]
+   [:div {:class "mx-auto bg-gray-900 text-white min-h-full"}]
    children))
 
 (defn home-panel []
