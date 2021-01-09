@@ -9,6 +9,18 @@ trigger:
 
 steps:
 - name: build
+  image: clojure:lein
+  commands:
+  - apt-get update
+  - apt-get install -y --no-install-recommends make
+  - curl -sL https://deb.nodesource.com/setup_14.x | bash
+  - apt-get install -y nodejs
+  - node -v
+  - npm -v
+  - lein deps
+  - lein release
+
+- name: upload_image
   image: plugins/docker
   settings:
     mtu: 1000
