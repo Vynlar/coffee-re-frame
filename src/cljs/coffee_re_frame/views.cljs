@@ -81,7 +81,15 @@
       [:h2 {:class "text-xl"}
        (:step/title step)]]
      [:div {:class "px-4 py-3"}
-      (:step/description step)]]))
+      (:step/description step)]
+     (if (:step/note step)
+      [:div {:class "px-4 py-3"}
+        [:p {:class "italic inline"}
+          "NOTE:\u00A0"]
+        [:p {:class "inline"}
+          (:step/note step)
+          ]]
+      )]))
 
 (defn liquid-timer []
   (let [state (re-frame/subscribe [::subs/recipe-state])

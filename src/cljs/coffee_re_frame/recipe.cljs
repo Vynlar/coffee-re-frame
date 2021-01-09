@@ -33,7 +33,7 @@
 (s/def ::recipe (s/keys :req [::name ::steps]))
 
 (defn create-v60-recipe [total-volume]
-  (let [coffee-weight (js/Math.round (/ total-volume 16))]
+  (let [coffee-weight (js/Math.floor (* total-volume 0.06))]
     {::name "Hario v60"
      ::steps [{:step/type :step.type/start
                :step/title "Prepare"
@@ -45,7 +45,8 @@
 
               {:step/type :step.type/prompt
                :step/title "Wet grounds"
-               :step/description (str "Add " coffee-weight "g coffee to the filter and use your finger to create a small hole in the center of the coffee. Then add 60g of water and immediately swirl until all ground are wet.")
+               :step/description (str "Add " coffee-weight "g coffee to the filter and use your finger to create a small hole in the center of the coffee. Then add " (* coffee-weight 2) "g of water and immediately swirl until all ground are wet.")
+               :step/note (str "A little more water is fine, but don't go above 3 times your grind weight (" (* coffee-weight 3) "g).")
                :step/volume (* total-volume (/ 30 250))}
 
               {:step/type :step.type/fixed
