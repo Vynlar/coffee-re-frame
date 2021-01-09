@@ -98,7 +98,7 @@
     [recipe-header recipe]
     [liquid-timer]
     [recipe-step]
-    [:div {:class "mt-auto"}
+    [:div {:class "fixed w-full bottom-0"}
      [next-step-panel]]]])
 
 (defn container [& children]
