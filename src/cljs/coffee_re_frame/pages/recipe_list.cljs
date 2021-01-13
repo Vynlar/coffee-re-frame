@@ -1,4 +1,4 @@
-(ns coffee-re-frame.views.recipe-list
+(ns coffee-re-frame.pages.recipe-list
   (:require
    [coffee-re-frame.recipe :as recipe]
    [coffee-re-frame.components :as c]))
