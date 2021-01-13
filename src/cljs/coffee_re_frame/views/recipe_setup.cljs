@@ -8,7 +8,7 @@
 (defn parse-number-event [event]
   (js/parseInt (.. event -target -value)))
 
-(defn setup-panel []
+(defn panel []
   (let [recipe-key @(re-frame/subscribe [::subs/selected-recipe-key])
         state (r/atom {:volume 250})
         max-volume 1000]

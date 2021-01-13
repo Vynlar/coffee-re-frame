@@ -14,3 +14,6 @@
    (into [:ul {:class "grid gap-3"}]
          (for [[recipe-key constructor] recipe/recipe-constructors]
            [recipe-list-item recipe-key (constructor 250)]))])
+
+(defn panel []
+  [c/container [recipe-select]])
