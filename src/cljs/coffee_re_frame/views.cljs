@@ -1,37 +1,12 @@
 (ns coffee-re-frame.views
   (:require
    [re-frame.core :as re-frame]
-   [reagent.core :as reagent :refer [class-names]]
+   [reagent.core :as r]
+   [coffee-re-frame.components :as c]
    [coffee-re-frame.subs :as subs]
    [coffee-re-frame.engine :as engine]
+   [coffee-re-frame.views.recipe-list :as recipe-list]
    [coffee-re-frame.recipe :as recipe]))
-
-
-;; home
-
-
-(defn micro-header
-  ([text] (micro-header {:variant :light} text))
-  ([{:keys [variant as]
-     :as attrs
-     :or {variant :light as :p}} text]
-   (let [classes (case variant
-                   :dark "text-black opacity-80"
-                   :light "text-white opacity-80")]
-     [as (merge attrs {:class (class-names "uppercase text-xs tracking-wider font-normal" classes)}) text])))
-
-(defn recipe-list-item [recipe-key recipe]
-  [:a {:class "p-4 bg-gray-800 border border-gray-600 rounded space-y-2 font-bold hover:bg-blue-500 transition transition-50"
-       :href (str "#/setup/" (name recipe-key))}
-   (::recipe/name recipe)])
-
-(defn recipe-select []
-  (let [recipes (re-frame/subscribe [::subs/recipes])]
-    [:div {:class "space-y-3 p-4"}
-     [micro-header "Select a brew method"]
-     (into [:ul {:class "grid gap-3"}]
-           (for [[recipe-key constructor] recipe/recipe-constructors]
-             [recipe-list-item recipe-key (constructor 250)]))]))
 
 (defn recipe-title [recipe]
   [:h1 (::recipe/name recipe)])
@@ -55,23 +30,23 @@
        (contains? #{:step.type/start :step.type/prompt} (:step/type step))
        [:button {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
                  :on-click #(re-frame/dispatch [::engine/next-step])}
-        [micro-header {:variant :light} "Continue to"]
+        [c/micro-header {:variant :light} "Continue to"]
         (or (:step/title next-step) "Done")]
 
        (contains? #{:step.type/end} (:step/type step))
        [:a {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
             :href "#/"}
-        [micro-header {:variant :light} "Recipe complete"]
+        [c/micro-header {:variant :light} "Recipe complete"]
         "Start over"]
 
        true
        [:div {:class "bg-gray-600 py-3 px-4 text-white flex flex-col w-full rounded"}
-        [micro-header (str "Up next in " remaining-seconds)]
+        [c/micro-header (str "Up next in " remaining-seconds)]
         (or (:step/title next-step) "Done")])]))
 
 (defn recipe-progress []
   (let [{:keys [index total]} @(re-frame/subscribe [::subs/recipe-progress])]
-    [micro-header (str "Step " (str (inc index)) " of " (str total))]))
+    [c/micro-header (str "Step " (str (inc index)) " of " (str total))]))
 
 (defn recipe-step []
   (let [step @(re-frame/subscribe [::subs/current-step])]
@@ -101,13 +76,13 @@
     [:div {:class "bg-white text-blue-600 p-4 pb-5"}
      (if (= (:step/type @current-step) :step.type/end)
        [:div
-        [micro-header {:variant :dark} "Brew time"]
+        [c/micro-header {:variant :dark} "Brew time"]
         [:p {:class "text-5xl font-bold"}
          (format-time (:tick @state))]]
 
        [:div
 
-        [micro-header {:variant :dark} "Liquid weight"]
+        [c/micro-header {:variant :dark} "Liquid weight"]
         [:p {:class "text-5xl font-bold"}
          (str (js/Math.round (:volume @state))) "g"
          [:span {:class "text-base font-normal text-gray-600"} "/" total-volume "g"]]])]))
@@ -121,31 +96,26 @@
     [:div {:class "fixed w-full bottom-0"}
      [next-step-panel]]]])
 
-(defn container [& children]
-  (into
-   [:div {:class "mx-auto bg-gray-900 text-white min-h-full"}]
-   children))
-
 (defn home-panel []
-  [container [recipe-select]])
+  [c/container [recipe-list/recipe-select]])
 
 (defn brew-panel []
   (let [recipe (re-frame/subscribe [::subs/selected-recipe])]
-    [container [recipe-session @recipe]]))
+    [c/container [recipe-session @recipe]]))
 
 (defn parse-number-event [event]
   (js/parseInt (.. event -target -value)))
 
 (defn setup-panel []
   (let [recipe-key @(re-frame/subscribe [::subs/selected-recipe-key])
-        state (reagent/atom {:volume 250})
+        state (r/atom {:volume 250})
         max-volume 1000]
     (fn []
-      [container
+      [c/container
        [:form {:class "flex flex-col p-4 space-y-2"}
         [:div {:class "pb-6"}
          [home-button]]
-        [micro-header {:for "volume" :as :label} "How much coffee do you want to make?"]
+        [c/micro-header {:for "volume" :as :label} "How much coffee do you want to make?"]
         [:div {:class "h-16"}
          (if (:custom @state)
            [:input {:id "custom-volume"
@@ -170,7 +140,7 @@
                                                      :custom (= volume max-volume)
                                                      :volume volume))))}]
         [:div {:class "space-y-2"}
-         [micro-header "Quick select"]
+         [c/micro-header "Quick select"]
          [:div {:class "flex space-x-2"}
           (for [[size label] [[250 "1 cup"] [500 "2 cups"] [max-volume "Custom"]]]
             [:button {:class "bg-gray-800 rounded py-2 px-4 border border-gray-700"
