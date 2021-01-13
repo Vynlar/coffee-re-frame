@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [reagent.core :as r]
+   [coffee-re-frame.engine :as engine]
    [coffee-re-frame.components :as c]))
 
 (defn parse-number-event [event]
