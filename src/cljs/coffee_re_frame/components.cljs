@@ -16,3 +16,7 @@
   (into
    [:div {:class "mx-auto bg-gray-900 text-white min-h-full"}]
    children))
+
+(defn home-button []
+  [:a {:class "text-xs tracking-wide"
+       :href "#/"} "Back"])
