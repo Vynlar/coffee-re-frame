@@ -3,11 +3,12 @@
    [re-frame.core :as re-frame]
    [reagent.core :as reagent :refer [class-names]]
    [coffee-re-frame.subs :as subs]
-   [coffee-re-frame.events :as events]
+   [coffee-re-frame.engine :as engine]
    [coffee-re-frame.recipe :as recipe]))
 
 
 ;; home
+
 
 (defn micro-header
   ([text] (micro-header {:variant :light} text))
@@ -53,7 +54,7 @@
      (cond
        (contains? #{:step.type/start :step.type/prompt} (:step/type step))
        [:button {:class "bg-blue-600 py-3 px-4 text-white flex flex-col w-full rounded focus:outline-none focus:ring focus:ring-blue-400 focus:bg-blue-700"
-                 :on-click #(re-frame/dispatch [::events/next-step])}
+                 :on-click #(re-frame/dispatch [::engine/next-step])}
         [micro-header {:variant :light} "Continue to"]
         (or (:step/title next-step) "Done")]
 
@@ -82,13 +83,11 @@
      [:div {:class "px-4 py-3"}
       (:step/description step)]
      (if (:step/note step)
-      [:div {:class "px-4 py-3"}
+       [:div {:class "px-4 py-3"}
         [:p {:class "italic inline"}
-          "NOTE:\u00A0"]
+         "NOTE:\u00A0"]
         [:p {:class "inline"}
-          (:step/note step)
-          ]]
-      )]))
+         (:step/note step)]])]))
 
 (defn format-time [seconds]
   (let [minutes (js/Math.floor (/ seconds 60))
@@ -107,7 +106,7 @@
          (format-time (:tick @state))]]
 
        [:div
-        
+
         [micro-header {:variant :dark} "Liquid weight"]
         [:p {:class "text-5xl font-bold"}
          (str (js/Math.round (:volume @state))) "g"
@@ -148,7 +147,7 @@
          [home-button]]
         [micro-header {:for "volume" :as :label} "How much coffee do you want to make?"]
         [:div {:class "h-16"}
-         (if (:custom @state) 
+         (if (:custom @state)
            [:input {:id "custom-volume"
                     :class "text-3xl font-bold bg-gray-700 border-none rounded px-2 py-1 w-full"
                     :type :number
@@ -158,7 +157,7 @@
            [:p {:class "text-3xl font-bold py-1"} (:volume @state)])
          [:p {:class "text-sm text-gray-500"} "milliliters"]]
         [:p {:class "italic text-sm text-gray-300"} "250ml is about a cup"]
-        
+
         [:input {:id "volume"
                  :type :range
                  :step 10
@@ -184,6 +183,7 @@
 
 
 ;; main
+
 
 (defn- panels [panel-name]
   (case panel-name

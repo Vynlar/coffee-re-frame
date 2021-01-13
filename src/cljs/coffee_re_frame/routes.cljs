@@ -7,7 +7,7 @@
    [goog.events :as gevents]
    [re-frame.core :as re-frame]
    [coffee-re-frame.events :as events]
-   ))
+   [coffee-re-frame.engine :as engine]))
 
 (defn hook-browser-navigation! []
   (doto (History.)
@@ -25,13 +25,15 @@
     (re-frame/dispatch [::events/set-active-panel :home-panel]))
 
   (defroute "/brew/:recipe-key/:volume" [recipe-key volume]
-    (re-frame/dispatch [::events/select-recipe (keyword recipe-key) volume])
+    (re-frame/dispatch [::engine/select-recipe (keyword recipe-key) volume])
     (re-frame/dispatch [::events/set-active-panel :brew-panel]))
 
   (defroute "/setup/:recipe-key" [recipe-key]
-    (re-frame/dispatch [::events/select-recipe (keyword recipe-key)])
+    (re-frame/dispatch [::engine/select-recipe (keyword recipe-key)])
     (re-frame/dispatch [::events/set-active-panel :setup-panel]))
 
 
   ;; --------------------
+
+
   (hook-browser-navigation!))
