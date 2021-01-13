@@ -1,8 +1,7 @@
-(ns coffee-re-frame.views.recipe-session
+(ns coffee-re-frame.pages.recipe-brew
   (:require
    [re-frame.core :as re-frame]
    [coffee-re-frame.recipe :as recipe]
-   [coffee-re-frame.subs :as subs]
    [coffee-re-frame.engine :as engine]
    [coffee-re-frame.components :as c]))
 
@@ -16,9 +15,9 @@
    [recipe-title recipe]])
 
 (defn next-step-panel []
-  (let [step @(re-frame/subscribe [::subs/current-step])
-        next-step @(re-frame/subscribe [::subs/next-step])
-        remaining-seconds @(re-frame/subscribe [::subs/remaining-seconds-in-step])]
+  (let [step @(re-frame/subscribe [::engine/current-step])
+        next-step @(re-frame/subscribe [::engine/next-step])
+        remaining-seconds @(re-frame/subscribe [::engine/remaining-seconds-in-step])]
     [:div {:class "p-3"}
      (cond
        (contains? #{:step.type/start :step.type/prompt} (:step/type step))
@@ -39,11 +38,11 @@
         (or (:step/title next-step) "Done")])]))
 
 (defn recipe-progress []
-  (let [{:keys [index total]} @(re-frame/subscribe [::subs/recipe-progress])]
+  (let [{:keys [index total]} @(re-frame/subscribe [::engine/recipe-progress])]
     [c/micro-header (str "Step " (str (inc index)) " of " (str total))]))
 
 (defn recipe-step []
-  (let [step @(re-frame/subscribe [::subs/current-step])]
+  (let [step @(re-frame/subscribe [::engine/current-step])]
     [:div
      [:div {:class "px-4 py-3 bg-gray-800 border-b border-gray-700"}
       [recipe-progress]
@@ -64,9 +63,9 @@
     (str minutes ":" seconds)))
 
 (defn liquid-timer []
-  (let [state (re-frame/subscribe [::subs/recipe-state])
-        total-volume @(re-frame/subscribe [::subs/total-volume])
-        current-step (re-frame/subscribe [::subs/current-step])]
+  (let [state (re-frame/subscribe [::engine/recipe-state])
+        total-volume @(re-frame/subscribe [::engine/total-volume])
+        current-step (re-frame/subscribe [::engine/current-step])]
     [:div {:class "bg-white text-blue-600 p-4 pb-5"}
      (if (= (:step/type @current-step) :step.type/end)
        [:div
@@ -91,5 +90,5 @@
      [next-step-panel]]]])
 
 (defn panel []
-  (let [recipe (re-frame/subscribe [::subs/selected-recipe])]
+  (let [recipe (re-frame/subscribe [::engine/selected-recipe])]
     [c/container [recipe-session @recipe]]))

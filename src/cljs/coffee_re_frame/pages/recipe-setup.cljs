@@ -1,15 +1,14 @@
-(ns coffee-re-frame.views.recipe-setup
+(ns coffee-re-frame.pages.recipe-setup
   (:require
    [re-frame.core :as re-frame]
    [reagent.core :as r]
-   [coffee-re-frame.subs :as subs]
    [coffee-re-frame.components :as c]))
 
 (defn parse-number-event [event]
   (js/parseInt (.. event -target -value)))
 
 (defn panel []
-  (let [recipe-key @(re-frame/subscribe [::subs/selected-recipe-key])
+  (let [recipe-key @(re-frame/subscribe [::engine/selected-recipe-key])
         state (r/atom {:volume 250})
         max-volume 1000]
     (fn []
