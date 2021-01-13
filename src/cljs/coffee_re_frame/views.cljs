@@ -4,8 +4,7 @@
    [reagent.core :as reagent :refer [class-names]]
    [coffee-re-frame.subs :as subs]
    [coffee-re-frame.events :as events]
-   [coffee-re-frame.recipe :as recipe]
-   ))
+   [coffee-re-frame.recipe :as recipe]))
 
 
 ;; home
