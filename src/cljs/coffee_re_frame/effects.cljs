@@ -3,15 +3,18 @@
    [clojure.walk :refer [keywordize-keys]]
    [re-frame.core :as re-frame]))
 
+(defn create-timer-handler [dispatch set-interval clear-interval]
+  (let [state (atom {})]
+    (fn [{:keys [action id interval event]}]
+      (if (= action :start)
+        (swap! state assoc id (set-interval #(dispatch event) interval))
+        (do
+          (clear-interval (get @state id))
+          (swap! state dissoc id))))))
+
 (re-frame/reg-fx
  :interval
- (let [state (atom {})]
-   (fn [{:keys [action id interval event]}]
-     (if (= action :start)
-       (swap! state assoc id (js/setInterval #(re-frame/dispatch event) interval))
-       (do
-         (js/clearInterval (get @state id))
-         (swap! state dissoc id))))))
+ (create-timer-handler re-frame/dispatch js/setInterval js/clearInterval))
 
 (defn local-storage-coeffect [coeffects key]
   (assoc coeffects :local-storage

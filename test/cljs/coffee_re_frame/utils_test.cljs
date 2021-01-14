@@ -1,6 +1,6 @@
 (ns coffee-re-frame.utils-test
   (:require [coffee-re-frame.utils :as utils]
-            [cljs.test :as t :refer-macros [deftest testing is]]))
+            [cljs.test :as t :refer-macros [deftest is]]))
 
 (deftest format-time-test
   (is (= (utils/format-time 0) "0:00"))
