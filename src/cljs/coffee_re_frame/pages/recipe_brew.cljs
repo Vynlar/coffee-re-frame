@@ -3,6 +3,7 @@
    [re-frame.core :as re-frame]
    [coffee-re-frame.recipe :as recipe]
    [coffee-re-frame.engine :as engine]
+   [coffee-re-frame.utils :as utils]
    [coffee-re-frame.components :as c]))
 
 (defn recipe-title [recipe]
@@ -57,11 +58,6 @@
         [:p {:class "inline"}
          (:step/note step)]])]))
 
-(defn format-time [seconds]
-  (let [minutes (js/Math.floor (/ seconds 60))
-        seconds (rem seconds 60)]
-    (str minutes ":" seconds)))
-
 (defn liquid-timer []
   (let [state (re-frame/subscribe [::engine/recipe-state])
         total-volume @(re-frame/subscribe [::engine/total-volume])
@@ -71,7 +67,7 @@
        [:div
         [c/micro-header {:variant :dark} "Brew time"]
         [:p {:class "text-5xl font-bold"}
-         (format-time (:tick @state))]]
+         (utils/format-time (:tick @state))]]
 
        [:div
 
