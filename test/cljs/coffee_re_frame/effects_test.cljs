@@ -28,14 +28,17 @@
       (effects/local-storage-effect [:local-storage key {:a {:nested [{:vector 3}]}}])
       (is (= (effects/local-storage-coeffect {} key)  {:local-storage {:a {:nested [{:vector 3}]}}})))))
 
+(defn setup-interval []
+  (let [state (atom {:dispatch [] :setInterval [] :clearInterval []})
+        handler (effects/create-timer-handler
+                 (fn [& args] (swap! state update :dispatch conj (vec args)))
+                 (fn [& args] (swap! state update :setInterval conj (vec args)))
+                 (fn [& args] (swap! state update :clearInterval conj (vec args))))]
+    {:state state :handler handler}))
+
 (deftest interval-effect
   (testing "starts a timer"
-    (let [state (atom {:dispatch [] :setInterval [] :clearInterval []})
-          handler (effects/create-timer-handler
-                   (fn [& args] (swap! state update :dispatch conj (vec args)))
-                   (fn [& args] (swap! state update :setInterval conj (vec args)))
-                   (fn [& args] (swap! state update :clearInterval conj (vec args))))]
-
+    (let [{:keys [state handler]} (setup-interval)]
       (handler {:action :start
                 :id :my-timer
                 :interval 1000
@@ -45,7 +48,7 @@
       (is (= (get-in @state [:setInterval 0 1]) 1000))
       (is (fn? (get-in @state [:setInterval 0 0])))
       (let [dispatcher (get-in @state [:setInterval 0 0])]
-        ; Simulate a setInterval event going off
+                                        ; Simulate a setInterval event going off
         (dispatcher)
         (is (= (get-in @state [:dispatch 0 0]) [:my-event]))
         (dispatcher)
@@ -54,4 +57,25 @@
       (handler {:action :stop
                 :id :my-timer})
 
-      (is (= (count (get-in @state [:clearInterval 0])) 1)))))
+      (is (= (count (get-in @state [:clearInterval 0])) 1)))
+
+    (testing "stops old timer if a timer with the same id is started"
+      (let [{:keys [state handler]} (setup-interval)]
+        (handler {:action :start
+                  :id :my-timer
+                  :interval 1000
+                  :event [:my-event]})
+
+        (is (= (count (:setInterval @state)) 1))
+
+        ;; Create a second timer with the same id
+        (handler {:action :start
+                  :id :my-timer
+                  :interval 1000
+                  :event [:my-event]})
+
+        (is (= (count (:clearInterval @state)) 1))
+        (is (= (count (:setInterval @state)) 2))
+
+        (handler {:action :stop
+                  :id :my-timer})))))

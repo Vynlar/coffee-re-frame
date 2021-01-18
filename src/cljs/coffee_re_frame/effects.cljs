@@ -7,7 +7,10 @@
   (let [state (atom {})]
     (fn [{:keys [action id interval event]}]
       (if (= action :start)
-        (swap! state assoc id (set-interval #(dispatch event) interval))
+        (do
+          (if (get @state id)
+            (clear-interval (get @state id)))
+          (swap! state assoc id (set-interval #(dispatch event) interval)))
         (do
           (clear-interval (get @state id))
           (swap! state dissoc id))))))
