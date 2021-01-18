@@ -8,7 +8,7 @@
     (fn [{:keys [action id interval event]}]
       (if (= action :start)
         (do
-          (if (get @state id)
+          (when (get @state id)
             (clear-interval (get @state id)))
           (swap! state assoc id (set-interval #(dispatch event) interval)))
         (do
@@ -26,11 +26,9 @@
              (keywordize-keys result)
              result))))
 
-(re-frame/reg-cofx
- :local-storage local-storage-coeffect)
+(re-frame/reg-cofx :local-storage local-storage-coeffect)
 
 (defn local-storage-effect [[_ key value]]
   (.setItem js/localStorage (name key) (.stringify js/JSON (clj->js value))))
 
-(re-frame/reg-fx
- :local-storage local-storage-effect)
+(re-frame/reg-fx :local-storage local-storage-effect)

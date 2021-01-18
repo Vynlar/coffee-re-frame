@@ -1,6 +1,6 @@
 (ns coffee-re-frame.effects-test
   (:require [coffee-re-frame.effects :as effects]
-            [cljs.test :as t :refer-macros [deftest testing is async]]))
+            [cljs.test :as t :refer-macros [deftest testing is]]))
 
 (deftest local-storage-effect
   (let [key :my-key]
@@ -48,7 +48,7 @@
       (is (= (get-in @state [:setInterval 0 1]) 1000))
       (is (fn? (get-in @state [:setInterval 0 0])))
       (let [dispatcher (get-in @state [:setInterval 0 0])]
-                                        ; Simulate a setInterval event going off
+        ; Simulate a setInterval event going off
         (dispatcher)
         (is (= (get-in @state [:dispatch 0 0]) [:my-event]))
         (dispatcher)
