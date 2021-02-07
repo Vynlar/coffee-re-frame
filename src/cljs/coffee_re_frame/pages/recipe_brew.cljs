@@ -15,6 +15,11 @@
     [c/home-button]]
    [recipe-title recipe]])
 
+
+(defn time-alert [seconds]
+  (cond
+    (<= seconds 3) (js/window.navigator.vibrate 100)))
+
 (defn next-step-panel []
   (let [step @(re-frame/subscribe [::engine/current-step])
         next-step @(re-frame/subscribe [::engine/next-step])
@@ -35,6 +40,7 @@
 
        true
        [:div {:class "bg-gray-600 py-3 px-4 text-white flex flex-col w-full rounded"}
+        (time-alert remaining-seconds)
         [c/micro-header (str "Up next in " remaining-seconds)]
         (or (:step/title next-step) "Done")])]))
 
