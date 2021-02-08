@@ -12,6 +12,7 @@
                  [compojure "1.6.2"]
                  [yogthos/config "1.1.7"]
                  [ring "1.8.2"]]
+                 [re-frame-utils "0.1.0"]
 
   :plugins [[lein-shadow "0.3.1"]
             [cider/cider-nrepl "0.25.5"]
