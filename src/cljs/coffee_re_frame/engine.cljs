@@ -41,13 +41,6 @@
  ::next-step
  handle-next-step)
 
-(defn get-selected-recipe [{:keys [recipes selected-recipe]} _]
-  (if selected-recipe
-    (selected-recipe recipes)
-    nil))
-
-(re-frame/reg-sub ::selected-recipe get-selected-recipe)
-
 (defn should-vibrate [seconds-remaining-in-step]
   (<= seconds-remaining-in-step 3))
 
@@ -113,6 +106,13 @@
  :<- [::recipe-state]
  (fn [[recipe {:keys [step-index]}] _]
    (get (::recipe/steps recipe) (inc step-index))))
+
+(re-frame/reg-sub
+ ::selected-recipe
+ (fn [{:keys [recipes selected-recipe]} _]
+   (if selected-recipe
+     (selected-recipe recipes)
+     nil)))
 
 (re-frame/reg-sub
  ::selected-recipe-key
