@@ -41,8 +41,8 @@
  ::next-step
  handle-next-step)
 
-(defn should-vibrate [seconds-remaining-in-step]
-  (<= seconds-remaining-in-step 3))
+(defn should-vibrate [remaining-seconds-in-step]
+  (<= remaining-seconds-in-step 3))
 
 (defn should-advance [db]
   (let [{:step/keys [type duration]} (db/get-current-step db)
@@ -65,11 +65,11 @@
 ;; Handle timing, sometimes advance to next step
 (defn handle-tick [cofx _]
   (let [db (:db cofx)
-        seconds-remaining-in-step (::seconds-remaining-in-step cofx)
+        remaining-seconds-in-step (::remaining-seconds-in-step cofx)
         new-db (-> db increment-ticks update-incremental-volume)]
     {:db new-db
      :fx [(if (should-advance new-db) [:dispatch [::next-step]] nil)
-          (if (should-vibrate seconds-remaining-in-step) [:vibrate 100] nil)]}))
+          (if (should-vibrate remaining-seconds-in-step) [:vibrate 100] nil)]}))
 
 (re-frame/reg-event-fx
  ::tick
