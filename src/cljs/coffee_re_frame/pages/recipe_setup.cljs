@@ -46,7 +46,8 @@
          [:div {:class "flex space-x-2"}
           (for [[size label] [[250 "1 cup"] [500 "2 cups"] [max-volume "Custom"]]]
             [:button {:class "bg-gray-800 rounded py-2 px-4 border border-gray-700"
-                      :on-click #(swap! state assoc :volume size :custom (= size max-volume))}
+                      :on-click #(swap! state assoc :volume size :custom (= size max-volume))
+                      :type "button"}
              label])]]
 
         [:div {:class "pt-4 w-full"}
