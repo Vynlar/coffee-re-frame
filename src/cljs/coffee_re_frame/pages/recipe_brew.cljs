@@ -63,14 +63,13 @@
         total-volume @(re-frame/subscribe [::engine/total-volume])
         current-step (re-frame/subscribe [::engine/current-step])]
     [:div {:class "bg-white text-blue-600 p-4 pb-5"}
-     (if (= (:step/type @current-step) :step.type/end)
+     (if (= (:step/display @current-step) :step.display/time)
        [:div
         [c/micro-header {:variant :dark} "Brew time"]
         [:p {:class "text-5xl font-bold"}
          (utils/format-time (:tick @state))]]
 
        [:div
-
         [c/micro-header {:variant :dark} "Liquid weight"]
         [:p {:class "text-5xl font-bold"}
          (str (js/Math.round (:volume @state))) "g"
