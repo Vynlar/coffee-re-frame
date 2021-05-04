@@ -33,7 +33,6 @@
                 
                 :builds {:app {:target :browser
                                :output-dir "resources/public/js/compiled"
-                               :module-hash-names true
                                :asset-path "/js/compiled"
                                :modules {:app {:init-fn coffee-re-frame.core/init
                                                :preloads [devtools.preload
