@@ -73,13 +73,13 @@
 
               {:step/type :step.type/prompt
                :step/title "Draw-down"
-               :step/display :time
+               :step/display :step.display/time
                :step/description "Wait for water level to meet the top of the grounds."}
 
               {:step/type :step.type/end
                :step/title "Enjoy"
                :step/description "Discard coffee grounds and enjoy."
-               :step/display :time
+               :step/display :step.display/time
                :step/timer :stop}]}))
 
 (def recipe-constructors
