@@ -42,7 +42,6 @@
  handle-next-step)
 
 (defn should-vibrate [remaining-seconds-in-step]
-  (js/console.log remaining-seconds-in-step)
   (and (> remaining-seconds-in-step 1)
        (<= remaining-seconds-in-step 4)))
 
