@@ -42,7 +42,9 @@
  handle-next-step)
 
 (defn should-vibrate [remaining-seconds-in-step]
-  (<= remaining-seconds-in-step 3))
+  (js/console.log remaining-seconds-in-step)
+  (and (> remaining-seconds-in-step 1)
+       (<= remaining-seconds-in-step 4)))
 
 (defn should-advance [db]
   (let [{:step/keys [type duration]} (db/get-current-step db)

@@ -34,6 +34,6 @@
 (re-frame/reg-fx :local-storage local-storage-effect)
 
 (defn vibrate-effect [duration]
-  (. js/navigator vibrate duration))
+  (.vibrate js/navigator duration))
 
 (re-frame/reg-fx :vibrate vibrate-effect)
