@@ -32,3 +32,8 @@
   (.setItem js/localStorage (name key) (.stringify js/JSON (clj->js value))))
 
 (re-frame/reg-fx :local-storage local-storage-effect)
+
+(defn vibrate-effect [duration]
+  (.vibrate js/navigator duration))
+
+(re-frame/reg-fx :vibrate vibrate-effect)

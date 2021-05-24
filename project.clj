@@ -11,7 +11,8 @@
                  [clj-commons/secretary "1.2.4"]
                  [compojure "1.6.2"]
                  [yogthos/config "1.1.7"]
-                 [ring "1.8.2"]]
+                 [ring "1.8.2"]
+                 [re-frame-utils "0.1.0"]]
 
   :plugins [[lein-shadow "0.3.1"]
             [cider/cider-nrepl "0.25.5"]
@@ -30,7 +31,7 @@
 
 
   :shadow-cljs {:nrepl {:port 8777}
-                
+
                 :builds {:app {:target :browser
                                :output-dir "resources/public/js/compiled"
                                :asset-path "/js/compiled"
@@ -45,8 +46,7 @@
 
                                :devtools {:http-root "resources/public"
                                           :http-port 8280
-                                          :http-handler coffee-re-frame.handler/dev-handler
-                                          }}
+                                          :http-handler coffee-re-frame.handler/dev-handler}}
                          :browser-test
                          {:target :browser-test
                           :ns-regexp "-test$"
@@ -59,14 +59,14 @@
                          {:target :karma
                           :ns-regexp "-test$"
                           :output-to "target/karma-test.js"}}}
-  
+
   :shell {:commands {"karma" {:windows         ["cmd" "/c" "karma"]
                               :default-command "karma"}
                      "open"  {:windows         ["cmd" "/c" "start"]
                               :macosx          "open"
                               :linux           "xdg-open"}}}
 
-  :aliases {"dev"          ["do" 
+  :aliases {"dev"          ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein watch instead.\""]
                             ["watch"]]
             "watch"        ["with-profile" "dev" "do"
@@ -97,7 +97,7 @@
     :source-paths ["dev"]}
 
    :prod {}
-   
+
    :uberjar {:source-paths ["env/prod/clj"]
              :omit-source  true
              :main         coffee-re-frame.server

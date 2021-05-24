@@ -3,6 +3,7 @@
    [coffee-re-frame.db :as db]
    [coffee-re-frame.recipe :as recipe]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
+   [vimsical.re-frame.cofx.inject :as inject]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-db
@@ -40,6 +41,10 @@
  ::next-step
  handle-next-step)
 
+(defn should-vibrate [remaining-seconds-in-step]
+  (and (> remaining-seconds-in-step 1)
+       (<= remaining-seconds-in-step 4)))
+
 (defn should-advance [db]
   (let [{:step/keys [type duration]} (db/get-current-step db)
         current-step-tick (get-in db [:recipe-state :current-step-tick])]
@@ -61,12 +66,15 @@
 ;; Handle timing, sometimes advance to next step
 (defn handle-tick [cofx _]
   (let [db (:db cofx)
+        remaining-seconds-in-step (::remaining-seconds-in-step cofx)
         new-db (-> db increment-ticks update-incremental-volume)]
     {:db new-db
-     :fx [(if (should-advance new-db) [:dispatch [::next-step]] nil)]}))
+     :fx [(if (should-advance new-db) [:dispatch [::next-step]] nil)
+          (if (should-vibrate remaining-seconds-in-step) [:vibrate 100] nil)]}))
 
 (re-frame/reg-event-fx
  ::tick
+ [(re-frame/inject-cofx ::inject/sub [::remaining-seconds-in-step])]
  handle-tick)
 
 (re-frame/reg-sub
