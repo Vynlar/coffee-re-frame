@@ -12,6 +12,7 @@
                  [compojure "1.6.2"]
                  [yogthos/config "1.1.7"]
                  [ring "1.8.2"]
+                 [hiccup "1.0.5"]
                  [re-frame-utils "0.1.0"]]
 
   :plugins [[lein-shadow "0.3.1"]
@@ -24,6 +25,8 @@
 
   :source-paths ["src/clj" "src/cljs"]
 
+  :resource-paths ["resources"]
+
   :test-paths   ["test/cljs"]
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
@@ -35,6 +38,7 @@
                 :builds {:app {:target :browser
                                :output-dir "resources/public/js/compiled"
                                :asset-path "/js/compiled"
+                               :module-hash-names true
                                :modules {:app {:init-fn coffee-re-frame.core/init
                                                :preloads [devtools.preload
                                                           day8.re-frame-10x.preload]}}
@@ -82,6 +86,8 @@
             "build-report" ["with-profile" "prod" "do"
                             ["shadow" "run" "shadow.cljs.build-report" "app" "target/build-report.html"]
                             ["shell" "open" "target/build-report.html"]]
+
+            "build-html"   ["run" "-m" "coffee-re-frame.build-html"]
 
             "karma"        ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein ci instead.\""]
