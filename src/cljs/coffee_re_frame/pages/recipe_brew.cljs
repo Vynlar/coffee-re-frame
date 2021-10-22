@@ -62,7 +62,6 @@
   (let [state (re-frame/subscribe [::engine/recipe-state])
         total-volume @(re-frame/subscribe [::engine/total-volume])
         current-step (re-frame/subscribe [::engine/current-step])]
-        (js/console.log @current-step)
     [:div {:class "bg-white text-blue-600 p-4 pb-5"}
      (if (= (:step/display @current-step) :step.display/time)
        [:div

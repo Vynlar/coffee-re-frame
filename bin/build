@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-lein release
-lein build-html
+lein uberjar

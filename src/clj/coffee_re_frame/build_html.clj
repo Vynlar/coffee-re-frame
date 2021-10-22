@@ -4,7 +4,7 @@
 
 (def index-html-resource (io/resource "public/index.html"))
 
-(def manifest
+(defn manifest []
   (read-string (slurp (io/resource "public/js/compiled/manifest.edn"))))
 
 (defn get-module [manifest module-id]
@@ -46,7 +46,7 @@
     [:noscript
      "\n      coffee-re-frame is a JavaScript app. Please enable JavaScript to continue.\n    "]
     [:div#app.h-full]
-    [:script {:src (str "js/compiled/" (get-output-name manifest :app))}]]])
+    [:script {:src (str "js/compiled/" (get-output-name (manifest) :app))}]]])
 
-(defn -main []
-  (spit index-html-resource (html (page))))
+(defn get-html []
+  (html (page)))

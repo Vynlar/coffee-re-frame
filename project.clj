@@ -16,7 +16,8 @@
                  [re-frame-utils "0.1.0"]]
 
   :plugins [[lein-shadow "0.3.1"]
-            [cider/cider-nrepl "0.25.5"]
+            [cider/cider-nrepl "0.27.2"]
+            [lein-pdo "0.1.1"]
             [lein-shell "0.5.0"]]
 
   :min-lein-version "2.9.0"
@@ -48,7 +49,7 @@
                                          {:ns-aliases
                                           {day8.re-frame.tracing day8.re-frame.tracing-stubs}}}
 
-                               :devtools {:http-root "resources/public"
+                               #_#_:devtools {:http-root "resources/public"
                                           :http-port 8280
                                           :http-handler coffee-re-frame.handler/dev-handler}}
                          :browser-test
@@ -72,9 +73,14 @@
 
   :aliases {"dev"          ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein watch instead.\""]
-                            ["watch"]]
-            "watch"        ["with-profile" "dev" "do"
-                            ["shadow" "watch" "app" "browser-test" "karma-test"]]
+                            ["watch-shadow"]]
+
+            "watch" ["pdo" "server," "watch-shadow"]
+
+            "watch-shadow"        ["with-profile" "dev" "do"
+                                   ["shadow" "watch" "app" "browser-test" "karma-test"]]
+
+            "server"       ["run" "-m" "coffee-re-frame.server"]
 
             "prod"         ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein release instead.\""]
@@ -86,8 +92,6 @@
             "build-report" ["with-profile" "prod" "do"
                             ["shadow" "run" "shadow.cljs.build-report" "app" "target/build-report.html"]
                             ["shell" "open" "target/build-report.html"]]
-
-            "build-html"   ["run" "-m" "coffee-re-frame.build-html"]
 
             "karma"        ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein ci instead.\""]

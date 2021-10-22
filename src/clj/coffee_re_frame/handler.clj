@@ -4,10 +4,11 @@
     [compojure.route :refer [resources not-found]]
     [ring.util.response :refer [resource-response]]
     [ring.middleware.reload :refer [wrap-reload]]
+    [coffee-re-frame.build-html :refer [get-html]]
     [shadow.http.push-state :as push-state]))
 
 (defroutes routes
-  (GET "/" [] (resource-response "index.html" {:root "public"}))
+  (GET "/" [] (get-html))
   (resources "/")
   (not-found "Page not found"))
 
