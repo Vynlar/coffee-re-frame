@@ -50,3 +50,6 @@
 
 (defn get-html []
   (html (page)))
+
+(defn -main [& args]
+  (spit index-html-resource (get-html)))

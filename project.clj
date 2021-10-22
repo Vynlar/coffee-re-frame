@@ -81,6 +81,7 @@
                                    ["shadow" "watch" "app" "browser-test" "karma-test"]]
 
             "server"       ["run" "-m" "coffee-re-frame.server"]
+            "build-html"       ["run" "-m" "coffee-re-frame.build-html"]
 
             "prod"         ["do"
                             ["shell" "echo" "\"DEPRECATED: Please use lein release instead.\""]
