@@ -65,7 +65,7 @@
 
                 [:div {:class "space-y-2"}
                  [c/micro-header "Quick select"]
-                 [:div {:class "flex space-x-2"}
+                 [:div {:class "grid grid-cols-3 gap-2"}
                   (for [[size label] (keep #(if % % nil) [[250 "1 cup"] [500 "2 cups"] last [max-volume "Custom"]])]
                     ^{:key label}
                     [:button {:class "bg-gray-800 rounded py-2 px-4 border border-gray-700"
