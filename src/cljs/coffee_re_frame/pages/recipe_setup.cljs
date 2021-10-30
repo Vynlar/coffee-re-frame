@@ -9,13 +9,21 @@
 (defn parse-number-event [event]
   (js/parseInt (.. event -target -value)))
 
+(defn get-last-size [] (let [storedLast (storage/get-item "lastSize")]
+  (if storedLast
+    (let [size (int storedLast)]
+      (cond
+        (< size 1) nil
+        (= size 250) nil
+        (= size 500) nil
+        (> size 1000) nil
+        :else [size (str size " ml")])) nil)))
+
 (defn panel []
   (let [recipe-key @(re-frame/subscribe [::engine/selected-recipe-key])
         state (r/atom {:volume 250})
         max-volume 1000
-        last
-          (let [n (storage/get-item "lastSize")]
-            (if n [(int n) (str n " ml")] nil))]
+        last (get-last-size)]
     (fn []
       (let [volume (:volume @state)]
         [c/container
