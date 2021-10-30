@@ -3,7 +3,8 @@
    [re-frame.core :as re-frame]
    [reagent.core :as r]
    [coffee-re-frame.engine :as engine]
-   [coffee-re-frame.components :as c]))
+   [coffee-re-frame.components :as c]
+   [coffee-re-frame.storage :as storage]))
 
 (defn parse-number-event [event]
   (js/parseInt (.. event -target -value)))
@@ -11,7 +12,10 @@
 (defn panel []
   (let [recipe-key @(re-frame/subscribe [::engine/selected-recipe-key])
         state (r/atom {:volume 250})
-        max-volume 1000]
+        max-volume 1000
+        last
+          (let [n (storage/get-item "lastSize")]
+            (if n [(int n) (str n " ml")] nil))]
     (fn []
       (let [volume (:volume @state)]
         [c/container
@@ -62,7 +66,7 @@
                 [:div {:class "space-y-2"}
                  [c/micro-header "Quick select"]
                  [:div {:class "flex space-x-2"}
-                  (for [[size label] [[250 "1 cup"] [500 "2 cups"] [max-volume "Custom"]]]
+                  (for [[size label] (keep #(if % % nil) [[250 "1 cup"] [500 "2 cups"] last [max-volume "Custom"]])]
                     ^{:key label}
                     [:button {:class "bg-gray-800 rounded py-2 px-4 border border-gray-700"
                               :on-click #(swap! state assoc :volume size :custom (= size max-volume))
