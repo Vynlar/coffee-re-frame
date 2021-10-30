@@ -75,4 +75,5 @@
 
                 [:div {:class "pt-4 w-full"}
                  [:a {:href (str  "#/brew/" (name recipe-key) "/" (:volume @state))
-                      :class "bg-blue-500 py-2 px-6 rounded text-center block"} "Next"]]]]))))
+                      :class "bg-blue-500 py-2 px-6 rounded text-center block"
+                      :on-click #(storage/set-item! "lastSize" (:volume @state))} "Next"]]]]))))
