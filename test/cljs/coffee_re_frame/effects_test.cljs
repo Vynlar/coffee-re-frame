@@ -6,27 +6,27 @@
   (let [key :my-key]
     (testing "primitives"
       (.clear js/localStorage)
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage nil}))
-      (effects/local-storage-effect [:local-storage key "my value"])
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage "my value"})))
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key nil}))
+      (effects/local-storage-effect [key "my value"])
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key "my value"})))
 
     (testing "vectors"
       (.clear js/localStorage)
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage nil}))
-      (effects/local-storage-effect [:local-storage key [1 2 3]])
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage [1 2 3]})))
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key nil}))
+      (effects/local-storage-effect [key [1 2 3]])
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key [1 2 3]})))
 
     (testing "maps"
       (.clear js/localStorage)
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage nil}))
-      (effects/local-storage-effect [:local-storage key {:key "value" :another "value2"}])
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage {:key "value" :another "value2"}})))
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key nil}))
+      (effects/local-storage-effect [key {:key "value" :another "value2"}])
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key {:key "value" :another "value2"}})))
 
     (testing "nested structures"
       (.clear js/localStorage)
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage nil}))
-      (effects/local-storage-effect [:local-storage key {:a {:nested [{:vector 3}]}}])
-      (is (= (effects/local-storage-coeffect {} key)  {:local-storage {:a {:nested [{:vector 3}]}}})))))
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key nil}))
+      (effects/local-storage-effect [key {:a {:nested [{:vector 3}]}}])
+      (is (= (effects/local-storage-coeffect {} [key key])  {:my-key {:a {:nested [{:vector 3}]}}})))))
 
 (defn setup-interval []
   (let [state (atom {:dispatch [] :setInterval [] :clearInterval []})
