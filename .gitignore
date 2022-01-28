@@ -1,5 +1,6 @@
 /out/
 /resources/public/js/compiled/
+/resources/public/css/
 /target/
 /*-init.clj
 /*.log
@@ -20,4 +21,3 @@
 .calva/output-window/output.calva-repl
 
 # Tailwind generated output
-./resources/public/css/main.css
