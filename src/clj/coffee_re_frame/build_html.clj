@@ -37,7 +37,7 @@
       :defer "defer"
       :async "async"}]
     [:title "Carafe"]]
-   [:body.h-full
+   [:body.h-full.touch-manipulation
     [:noscript
      "\n      coffee-re-frame is a JavaScript app. Please enable JavaScript to continue.\n    "]
     [:div#app.h-full]
