@@ -77,8 +77,9 @@
 
             "watch" ["pdo" "server," "watch-shadow"]
 
-            "watch-shadow"        ["with-profile" "dev" "do"
-                                   ["shadow" "watch" "app" "browser-test" "karma-test"]]
+            "watch-shadow"        ["with-profile" "dev" "pdo"
+                                   ["shadow" "watch" "app" "browser-test" "karma-test"]
+                                   ["shell" "npm" "run" "build:css:watch"]]
 
             "server"       ["run" "-m" "coffee-re-frame.server"]
             "build-html"       ["run" "-m" "coffee-re-frame.build-html"]
@@ -88,6 +89,7 @@
                             ["release"]]
 
             "release"      ["with-profile" "prod" "do"
+                            ["shell" "npm" "run" "build:css"]
                             ["shadow" "release" "app"]]
 
             "build-report" ["with-profile" "prod" "do"
