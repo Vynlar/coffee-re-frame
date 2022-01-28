@@ -29,12 +29,7 @@
     [:link
      {:media "screen"
       :type "text/css"
-      :href "/tailwind.css"
-      :rel "stylesheet"}]
-    [:link
-     {:media "screen"
-      :type "text/css"
-      :href "/css/main.css"
+      :href "/css/index.css"
       :rel "stylesheet"}]
     [:script
      {:src "https://plausible.aleixandre.dev/js/plausible.js"
