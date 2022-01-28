@@ -1,5 +1,9 @@
 {
 	"name": "coffee-re-frame",
+	"scripts": {
+		"build:css": "tailwind -o ./resouces/public/css/main.css -m",
+		"build:css:watch": "npm run build:css -- --watch"
+	},
 	"dependencies": {
 		"highlight.js": "10.4.1",
 		"react": "16.14.0",
