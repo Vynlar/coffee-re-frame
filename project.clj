@@ -78,8 +78,8 @@
             "watch" ["pdo" "server," "watch-shadow"]
 
             "watch-shadow"        ["with-profile" "dev" "pdo"
-                                   ["shadow" "watch" "app" "browser-test" "karma-test"]
-                                   ["shell" "npm" "run" "build:css:watch"]]
+                                   ["shell" "npm" "run" "build:css:watch"]
+                                   ["shadow" "watch" "app" "browser-test" "karma-test"]]
 
             "server"       ["run" "-m" "coffee-re-frame.server"]
             "build-html"       ["run" "-m" "coffee-re-frame.build-html"]
