@@ -1,5 +1,6 @@
 /out/
 /resources/public/js/compiled/
+# Tailwind generated output
 /resources/public/css/
 /target/
 /*-init.clj
@@ -19,5 +20,3 @@
 /.clj-kondo
 /.lsp
 .calva/output-window/output.calva-repl
-
-# Tailwind generated output
