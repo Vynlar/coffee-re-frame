@@ -3,6 +3,7 @@
    [re-frame.core :as re-frame]
    [reagent.core :as r]
    [coffee-re-frame.engine :as engine]
+   [coffee-re-frame.utils :as utils]
    [coffee-re-frame.components :as c]))
 
 (defn parse-number-event [event]
@@ -71,5 +72,7 @@
                 [:div {:class "pt-4 w-full"}
                  [:a {:href (str  "#/brew/" (name recipe-key) "/" @volume)
                       :class "bg-blue-500 py-2 px-6 rounded text-center block"
-                      :on-click #(re-frame/dispatch [:recipe-setup/save-last-size])}
+                      :on-click (fn []
+                        #(re-frame/dispatch [:recipe-setup/save-last-size])
+                        (utils/create-wakelock))}
                   "Next"]]]]))))
