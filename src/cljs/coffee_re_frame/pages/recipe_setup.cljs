@@ -74,5 +74,5 @@
                       :class "bg-blue-500 py-2 px-6 rounded text-center block"
                       :on-click (fn []
                         #(re-frame/dispatch [:recipe-setup/save-last-size])
-                        (utils/create-wakelock))}
+                        #(re-frame/dispatch [:recipe-setup/start-wakelock]))}
                   "Next"]]]]))))

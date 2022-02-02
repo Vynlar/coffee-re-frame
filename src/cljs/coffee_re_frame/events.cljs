@@ -2,7 +2,9 @@
   (:require
    [coffee-re-frame.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
-   [re-frame.core :as re-frame]))
+   [re-frame.core :as re-frame]
+   [cljs.core.async :refer [go]]
+   [cljs.core.async.interop :refer-macros [<p!]]))
 
 (def last-size-key "lastSize")
 
@@ -52,6 +54,26 @@
             (let [new-last-size (get-in db [:recipe-setup :volume])]
               {:local-storage [last-size-key new-last-size]
                :db (assoc-in db [:recipe-setup :last-size] new-last-size)})))
+
+(re-frame/reg-event-fx
+  :recipe-setup/start-wakelock
+  (fn-traced [db]
+    (if (exists? js/navigator.wakeLock)
+      (go
+        ;; User can decline wake lock, or the battery might be too low.
+        ;; Don't be greedy with the wakeLock request.
+        (try
+          ;; "Promisified"
+          (let [lock (<p! (js/navigator.wakeLock.request "screen"))]
+            (update db :wake-lock lock)
+            (js/console.log lock))
+          (catch :default ex (prn ex)))))))
+
+(re-frame/reg-event-fx
+  :recipe-setup/stop-wakelock
+  (fn-traced [db]
+    (let [lock (get-in db :wake-lock)]
+      (:release lock))))
 
 (re-frame/reg-event-db
  :recipe-setup/make-custom
