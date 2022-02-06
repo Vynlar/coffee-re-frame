@@ -1,7 +1,7 @@
 {
 	"name": "coffee-re-frame",
 	"scripts": {
-		"build:css": "tailwind -o ./resources/public/css/main.css -m",
+		"build:css": "tailwindcss -o ./resources/public/css/main.css -m",
 		"build:css:watch": "npm run build:css -- --watch"
 	},
 	"dependencies": {
