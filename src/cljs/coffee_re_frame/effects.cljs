@@ -37,3 +37,33 @@
   (.vibrate js/navigator duration))
 
 (re-frame/reg-fx :vibrate vibrate-effect)
+
+(def current-lock (atom nil))
+
+(defn lock-brightness []
+  (when-let [wakeLock (.-wakeLock js/navigator)]
+    (->
+     (.request wakeLock "screen")
+     (.then (fn [new-lock]
+              (js/console.log "Locking screen brightness: " new-lock)
+              (reset! current-lock new-lock)))
+     (.catch (fn [error]
+               (js/console.error "Error locking screen brightness"
+                                 error))))))
+
+(defn unlock-brightness []
+  (when @current-lock
+    (-> (.release @current-lock)
+        (.then (fn []
+                 (js/console.log "Released wake lock")))
+        (.catch (fn [error]
+                  (js/console.log "Failed to release wake lock"
+                                  error))))))
+
+(defn wakelock-effect [action]
+  (case action
+    :lock (lock-brightness)
+    :unlock (unlock-brightness)
+    (throw "error")))
+
+(re-frame/reg-fx :wakelock wakelock-effect)

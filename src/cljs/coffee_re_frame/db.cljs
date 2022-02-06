@@ -6,7 +6,6 @@
   {:selected-recipe nil
    :recipes {}
    :recipe-state nil
-   :wake-lock nil
    :recipe-setup {:volume 250
                   :max-volume 1000
                   :quick-options [[250 "1 cup"] [500 "2 cups"]]
