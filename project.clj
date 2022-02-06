@@ -90,6 +90,7 @@
                             ["release"]]
 
             "release"      ["with-profile" "prod" "do"
+                            ["shell" "npm" "install"]
                             ["shell" "npm" "run" "build:css"]
                             ["shadow" "release" "app"]]
 
