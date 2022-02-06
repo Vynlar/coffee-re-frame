@@ -19,6 +19,9 @@
    (get-module module-id)
    module->output-name))
 
+(defn rand-str [len]
+  (apply str (take len (repeatedly #(char (+ (rand 26) 65))))))
+
 (defn page []
   [:html
    {:lang "en"}
@@ -29,7 +32,7 @@
     [:link
      {:media "screen"
       :type "text/css"
-      :href "/css/main.css"
+      :href (str "/css/main.css?" (rand-str 16))
       :rel "stylesheet"}]
     [:script
      {:src "https://plausible.aleixandre.dev/js/plausible.js"
