@@ -2,7 +2,9 @@
   (:require
    [coffee-re-frame.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
-   [re-frame.core :as re-frame]))
+   [re-frame.core :as re-frame]
+   [cljs.core.async :refer [go]]
+   [cljs.core.async.interop :refer-macros [<p!]]))
 
 (def last-size-key "lastSize")
 

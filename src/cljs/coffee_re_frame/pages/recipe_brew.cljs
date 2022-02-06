@@ -51,7 +51,7 @@
        (:step/title step)]]
      [:div {:class "px-4 py-3"}
       (:step/description step)]
-     (if (:step/note step)
+     (when (:step/note step)
        [:div {:class "px-4 py-3"}
         [:p {:class "italic inline"}
          "NOTE:\u00A0"]
