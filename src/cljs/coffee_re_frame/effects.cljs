@@ -41,22 +41,24 @@
 (def current-lock (atom nil))
 
 (defn lock-brightness []
-  (->
-   (.request (.-wakeLock js/navigator) "screen")
-   (.then (fn [new-lock]
-            (js/console.log "Locking screen brightness: " new-lock)
-            (reset! current-lock new-lock)))
-   (.catch (fn [error]
-             (js/console.error "Error locking screen brightness"
-                               error)))))
+  (when-let [wakeLock (.-wakeLock js/navigator)]
+    (->
+     (.request wakeLock "screen")
+     (.then (fn [new-lock]
+              (js/console.log "Locking screen brightness: " new-lock)
+              (reset! current-lock new-lock)))
+     (.catch (fn [error]
+               (js/console.error "Error locking screen brightness"
+                                 error))))))
 
 (defn unlock-brightness []
-  (-> (.release @current-lock)
-      (.then (fn []
-               (js/console.log "Released wake lock")))
-      (.catch (fn [error]
-                (js/console.log "Failed to release wake lock"
-                                error)))))
+  (when @current-lock
+    (-> (.release @current-lock)
+        (.then (fn []
+                 (js/console.log "Released wake lock")))
+        (.catch (fn [error]
+                  (js/console.log "Failed to release wake lock"
+                                  error))))))
 
 (defn wakelock-effect [action]
   (case action

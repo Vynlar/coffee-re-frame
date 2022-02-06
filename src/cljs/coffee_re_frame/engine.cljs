@@ -6,12 +6,14 @@
    [vimsical.re-frame.cofx.inject :as inject]
    [re-frame.core :as re-frame]))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
  ::select-recipe
- (fn-traced [db [_ recipe-key volume]]
-            (-> db
-                (assoc-in [:recipes recipe-key] ((get recipe/recipe-constructors recipe-key) volume))
-                (db/select-recipe recipe-key))))
+ (fn-traced [{:keys [db]} [_ recipe-key volume]]
+            {:db
+             (-> db
+                 (assoc-in [:recipes recipe-key] ((get recipe/recipe-constructors recipe-key) volume))
+                 (db/select-recipe recipe-key))
+             :wakelock :lock}))
 
 (defn update-one-time-volume [db]
   (let [{:step/keys [volume duration]} (db/get-current-step db)]
@@ -35,6 +37,11 @@
                                 :event [::tick]}}
              :stop {:interval {:action :stop
                                :id :ticker}}
+             nil)
+
+           ; Unlock screen brightness on the last step
+           (case (:step/type new-current-step)
+             :step.type/end {:wakelock :unlock}
              nil))))
 
 (re-frame/reg-event-fx

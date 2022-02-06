@@ -70,7 +70,5 @@
           [:div {:class "pt-4 w-full"}
            [:a {:href (str  "#/brew/" (name recipe-key) "/" @volume)
                 :class "bg-blue-500 py-2 px-6 rounded text-center block"
-                :on-click (fn []
-                            (re-frame/dispatch [:recipe-setup/save-last-size])
-                            (re-frame/dispatch [:recipe-setup/start-wakelock]))}
+                :on-click #(re-frame/dispatch [:recipe-setup/save-last-size])}
             "Next"]]]]))))

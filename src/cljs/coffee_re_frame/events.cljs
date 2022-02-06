@@ -55,16 +55,6 @@
               {:local-storage [last-size-key new-last-size]
                :db (assoc-in db [:recipe-setup :last-size] new-last-size)})))
 
-(re-frame/reg-event-fx
- :recipe-setup/start-wakelock
- (fn-traced [_]
-            {:wakelock :lock}))
-
-(re-frame/reg-event-fx
- :recipe-setup/stop-wakelock
- (fn-traced [_]
-            {:wakelock :unlock}))
-
 (re-frame/reg-event-db
  :recipe-setup/make-custom
  (fn-traced [db _]
