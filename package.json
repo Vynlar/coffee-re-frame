@@ -1,7 +1,12 @@
 {
 	"name": "coffee-re-frame",
+	"scripts": {
+		"build:css": "tailwind -o ./resources/public/css/main.css -m",
+		"build:css:watch": "npm run build:css -- --watch"
+	},
 	"dependencies": {
 		"highlight.js": "10.4.1",
+		"postcss": "^8.4.5",
 		"react": "16.14.0",
 		"react-dom": "16.14.0",
 		"react-highlight.js": "1.0.7"
@@ -11,6 +16,7 @@
 		"karma-chrome-launcher": "3.1.0",
 		"karma-cljs-test": "0.1.0",
 		"karma-junit-reporter": "2.0.1",
-		"shadow-cljs": "2.11.7"
+		"shadow-cljs": "2.11.7",
+		"tailwindcss": "^3.0.17"
 	}
 }

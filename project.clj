@@ -33,7 +33,6 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
-
   :shadow-cljs {:nrepl {:port 8777}
 
                 :builds {:app {:target :browser
@@ -49,9 +48,10 @@
                                          {:ns-aliases
                                           {day8.re-frame.tracing day8.re-frame.tracing-stubs}}}
 
+                               :devtools {:watch-dir "resources/public"}
                                #_#_:devtools {:http-root "resources/public"
-                                          :http-port 8280
-                                          :http-handler coffee-re-frame.handler/dev-handler}}
+                                              :http-port 8280
+                                              :http-handler coffee-re-frame.handler/dev-handler}}
                          :browser-test
                          {:target :browser-test
                           :ns-regexp "-test$"
@@ -75,10 +75,12 @@
                             ["shell" "echo" "\"DEPRECATED: Please use lein watch instead.\""]
                             ["watch-shadow"]]
 
-            "watch" ["pdo" "server," "watch-shadow"]
+            "watch" ["pdo" "server," "watch-shadow," "tailwind"]
 
             "watch-shadow"        ["with-profile" "dev" "do"
                                    ["shadow" "watch" "app" "browser-test" "karma-test"]]
+
+            "tailwind" ["shell" "npm" "run" "build:css:watch"]
 
             "server"       ["run" "-m" "coffee-re-frame.server"]
             "build-html"       ["run" "-m" "coffee-re-frame.build-html"]
@@ -88,6 +90,7 @@
                             ["release"]]
 
             "release"      ["with-profile" "prod" "do"
+                            ["shell" "npm" "run" "build:css"]
                             ["shadow" "release" "app"]]
 
             "build-report" ["with-profile" "prod" "do"

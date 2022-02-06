@@ -1,5 +1,7 @@
 /out/
 /resources/public/js/compiled/
+# Tailwind generated output
+/resources/public/css/
 /target/
 /*-init.clj
 /*.log

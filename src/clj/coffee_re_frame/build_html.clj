@@ -29,11 +29,6 @@
     [:link
      {:media "screen"
       :type "text/css"
-      :href "/tailwind.css"
-      :rel "stylesheet"}]
-    [:link
-     {:media "screen"
-      :type "text/css"
       :href "/css/main.css"
       :rel "stylesheet"}]
     [:script
@@ -42,7 +37,7 @@
       :defer "defer"
       :async "async"}]
     [:title "Carafe"]]
-   [:body.h-full
+   [:body.h-full.touch-manipulation
     [:noscript
      "\n      coffee-re-frame is a JavaScript app. Please enable JavaScript to continue.\n    "]
     [:div#app.h-full]
