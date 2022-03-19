@@ -1,5 +1,7 @@
 # Carafe
 
+[Live demo](https://carafe.aleixandre.dev/). This app is designed to be used on a mobile phone and I recommend you open the link using one. While it _does_ work perfectly fine on a larger screen it looks a bit odd.
+
 A timer app designed for pour-over coffee.
 
 Making pour-over coffee is a finicky process. The result of a brew is highly dependent on each variable and anything we can do to control those variables is helpful. Two such variables are time and brew weight. Ensuring that the right amount of water is added at the right time is paramount. The traditional process is to keep your eye on a stopwatch and the scale and do the math in your head for what the weight should read at what time. 
