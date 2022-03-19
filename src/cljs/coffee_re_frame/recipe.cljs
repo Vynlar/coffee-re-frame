@@ -57,7 +57,7 @@
 
               {:step/type :step.type/fixed
                :step/title "First pour"
-               :step/description "Pour water at a strong, even rate, swirling from the center ourwards. Water should enter the grounds with force but not splash."
+               :step/description "Pour water at a strong, even rate, swirling from the center outwards. Water should enter the grounds with force but not splash."
                :step/volume (* total-volume (/ 120 250))
                :step/duration 30}
 
