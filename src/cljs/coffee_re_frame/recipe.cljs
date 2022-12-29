@@ -45,54 +45,59 @@
                :step/description (str "Boil about " (* 1.5 total-volume) "ml of water. Rinse filter with a generous amount of boiled water. Discard the water.")}
 
               {:step/type :step.type/prompt
-               :step/title "Wet grounds"
-               :step/description (str "Add " coffee-weight "g coffee to the filter and use your finger to create a small hole in the center of the coffee. Then add " (water-portion) "g of water and immediately swirl until all ground are wet.")
-               :step/volume (* total-volume (/ 50 250))}
+               :step/title "Add grounds"
+               :step/description (str "Add " coffee-weight "g coffee to the filter and use your finger to create a small hole in the center of the coffee. ")}
 
               {:step/type :step.type/fixed
-               :step/title "Bloom"
-               :step/description "Wait for coffee to bloom, releasing CO2."
-               :step/duration 30
+               :step/title "Wet grounds"
+               :step/description (str "Gently pour " water-portion "ml of water into the middle of the gounds, spiraling outwards ensuring all grounds are wet.")
+               :step/volume (* total-volume (/ 50 250))
+               :step/duration 15
                :step/timer :start}
 
               {:step/type :step.type/fixed
-               :step/title "First pour"
-               :step/description "Pour water at a strong, even rate, swirling from the center outwards. Water should enter the grounds with force but not splash."
+               :step/title "Bloom"
+               :step/description "Gently swirl the entire countainer to ensure grounds are wet, and wait for coffee to bloom, releasing CO2."
+               :step/duration 30}
+
+              {:step/type :step.type/fixed
+               :step/title "first pour"
+               :step/description "pour water at a strong, even rate, swirling from the center outwards. water should enter the grounds with force but not splash."
                :step/volume (* total-volume (/ 50 250))
-               :step/duration 50}
+               :step/duration 15}
               
-              {:step/type :step.type/prompt
+              {:step/type :step.type/fixed
                :step/title "1st Wait"
                :step/description "Let the coffee rest"
-               :step/duration 15}
+               :step/duration 10}
 
               {:step/type :step.type/fixed
                :step/title "Second pour"
                :step/description "Continue to pour"
                :step/volume (* total-volume (/ 50 250))
-               :step/duration 15}
+               :step/duration 10}
               
-              {:step/type :step.type/prompt
+              {:step/type :step.type/fixed
                :step/title "2nd Wait"
                :step/description "Let the coffee rest"
-               :step/duration 15}
+               :step/duration 10}
               
               {:step/type :step.type/fixed
                :step/title "Third pour"
                :step/description "Continue to pour"
                :step/volume (* total-volume (/ 50 250))
-               :step/duration 15}
+               :step/duration 10}
               
-              {:step/type :step.type/prompt
+              {:step/type :step.type/fixed
                :step/title "3rd Wait"
                :step/description "Let the coffee rest"
-               :step/duration 15}
+               :step/duration 10}
 
               {:step/type :step.type/fixed
                :step/title "Final pour"
                :step/description "Continue to pour"
                :step/volume (* total-volume (/ 50 250))
-               :step/duration 15}
+               :step/duration 10}
 
               {:step/type :step.type/prompt
                :step/title "Stir + swirl"
@@ -160,8 +165,8 @@
                :step/timer :stop}]}))
 
 (def recipe-constructors
-  {:v60 create-v60-recipe}
-  {:v62 create-v60-single-recipe})
+  {:v60-single create-v60-single-recipe
+  :v60 create-v60-recipe})
 
 (defn get-total-volume [recipe]
   (let [steps (::steps recipe)]
