@@ -38,11 +38,11 @@
     {::name "Hario v60"
      ::steps [{:step/type :step.type/start
                :step/title "Prepare"
-               :step/description (str "Grind " coffee-weight "g of coffee, set it aside for later. Place your filter into the v60 brewer.")}
+               :step/description (str "Boil about " (* 2 total-volume) "ml of water. Use some of the water to pre-heat your V60 brewer, without the filter. Grind " coffee-weight "g of coffee, set it aside for later. Place your filter into the v60 brewer.")}
 
               {:step/type :step.type/prompt
                :step/title "Rinse filter"
-               :step/description (str "Boil about " (* 1.5 total-volume) "ml of water. Rinse filter with a generous amount of boiled water. Discard the water.")}
+               :step/description "Rinse filter with a generous amount of boiled water. Discard the water in the filter."}
 
               {:step/type :step.type/prompt
                :step/title "Add grounds"
@@ -123,7 +123,7 @@
 
               {:step/type :step.type/prompt
                :step/title "Rinse filter"
-               :step/description (str "Boil about " (* 1.5 total-volume) "ml of water. Rinse filter with a generous amount of boiled water. Discard the water.")}
+               :step/description (str "Boil about " (* 1.5 total-volume) "ml of water. Rinse filter with a generous amount of boiled water. Discard the water in the filter.")}
 
               {:step/type :step.type/prompt
                :step/title "Wet grounds"
